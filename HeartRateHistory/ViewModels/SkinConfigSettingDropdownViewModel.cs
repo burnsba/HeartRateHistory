@@ -84,41 +84,41 @@ namespace HeartRateHistory.ViewModels
         public SkinConfigSettingDropdownViewModel(Setting item)
             : base(item)
         {
-            //try
-            //{
-            //    _dataProvider = HidDisplay.SkinModel.TypeResolver.CreateConfigDataProviderInstance(item.Datasource, item.DatasourceAssembly);
-            //}
-            //catch (Exception ex)
-            //{
-            //    var message = $"Could not resolve datasource. Datasource='{item.Datasource}', DatasourceAssembly='{item.DatasourceAssembly}'.";
-            //    throw new HidDisplay.SkinModel.Error.InvalidConfiguration(message, ex);
-            //}
+            try
+            {
+                _dataProvider = TypeResolver.CreateConfigDataProviderInstance(item.Datasource, item.DatasourceAssembly);
+            }
+            catch (Exception ex)
+            {
+                var message = $"Could not resolve datasource. Datasource='{item.Datasource}', DatasourceAssembly='{item.DatasourceAssembly}'.";
+                throw new Error.InvalidConfiguration(message, ex);
+            }
 
-            //var dataProviderType = _dataProvider.GetType();
+            var dataProviderType = _dataProvider.GetType();
 
-            //if (typeof(IConfigDataProviderOnce).IsAssignableFrom(dataProviderType))
-            //{
-            //    var onceProvider = (IConfigDataProviderOnce)_dataProvider;
-            //    Items = onceProvider.FetchData().Select(x => new DropdownItem() { Id = x.Key, Text = x.Value }).ToList();
-            //}
-            //else if (typeof(IConfigDataProviderPoll).IsAssignableFrom(dataProviderType))
-            //{
-            //    Items = new List<DropdownItem>();
+            if (typeof(IConfigDataProviderOnce).IsAssignableFrom(dataProviderType))
+            {
+                var onceProvider = (IConfigDataProviderOnce)_dataProvider;
+                Items = onceProvider.FetchData().Select(x => new DropdownItem() { Id = x.Key, Text = x.Value }).ToList();
+            }
+            else if (typeof(IConfigDataProviderPoll).IsAssignableFrom(dataProviderType))
+            {
+                Items = new List<DropdownItem>();
 
-            //    _isPoll = true;
-            //    WaitingForFirstPollResult = true;
+                _isPoll = true;
+                WaitingForFirstPollResult = true;
 
-            //    var pollProvider = (IConfigDataProviderPoll)_dataProvider;
-            //    pollProvider.DataItems.CollectionChanged += DataProviderPollCollectionChanged;
+                var pollProvider = (IConfigDataProviderPoll)_dataProvider;
+                pollProvider.DataItems.CollectionChanged += DataProviderPollCollectionChanged;
 
-            //    pollProvider.Start();
-            //}
-            //else
-            //{
-            //    throw new HidDisplay.SkinModel.Error.InvalidConfiguration("Settings dropdown doesn't implement a known interface.");
-            //}
+                pollProvider.Start();
+            }
+            else
+            {
+                throw new Error.InvalidConfiguration("Settings dropdown doesn't implement a known interface.");
+            }
 
-            //SelectedItem = Items.Where(x => x.Id == CurrentValue).FirstOrDefault();
+            SelectedItem = Items.Where(x => x.Id == CurrentValue).FirstOrDefault();
         }
 
         private void DataProviderPollCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)

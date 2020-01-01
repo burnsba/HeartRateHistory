@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HeartRateHistory.HotConfig;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,10 +15,82 @@ namespace HeartRateHistory.Converters
         private static List<SolidColorBrush> IntervalValues = null;
         private static int[] IntervalIndexMap;
 
-        private static int ColorIntervals = 0; // set in Setup()
-        private static int MinCutoff = int.MaxValue; // set in Setup()
-        private static int MaxCutoff = int.MinValue; // set in Setup()
-        private static int CutoffRange = 0; // set in Setup()
+        private static int _colorIntervals = 0;
+        private static int _minCutoff = int.MaxValue;
+        private static int _maxCutoff = int.MinValue;
+        private static int _cutoffRange = 0;
+        
+        private static int ColorIntervals
+        {
+            get
+            {
+                if (!_isSetup)
+                {
+                    Setup();
+                }
+
+                return _colorIntervals;
+            }
+
+            set
+            {
+                _colorIntervals = value;
+            }
+        }
+        private static int MinCutoff
+        {
+            get
+            {
+                if (!_isSetup)
+                {
+                    Setup();
+                }
+
+                return _minCutoff;
+            }
+
+            set
+            {
+                _minCutoff = value;
+            }
+        }
+        private static int MaxCutoff
+        {
+            get
+            {
+                if (!_isSetup)
+                {
+                    Setup();
+                }
+
+                return _maxCutoff;
+            }
+
+            set
+            {
+                _maxCutoff = value;
+            }
+        }
+        private static int CutoffRange
+        {
+            get
+            {
+                if (!_isSetup)
+                {
+                    Setup();
+                }
+
+                return _cutoffRange;
+            }
+
+            set
+            {
+                _cutoffRange = value;
+            }
+        }
+
+
+        private static bool _isSetup = false;
 
         public static System.Windows.Media.Brush FromInt(int val)
         {
@@ -54,13 +127,22 @@ namespace HeartRateHistory.Converters
             }
         }
 
-        private static void Setup()
+        public static void Setup()
         {
-            ColorIntervals = Config.NumberColorIntervals;
+            ReloadConfig();
+            
+            _cutoffRange = _maxCutoff - _minCutoff;
 
-            MinCutoff = Config.HeartRateGreenFloor;
-            MaxCutoff = Config.HeartRateRedCeiling;
-            CutoffRange = MaxCutoff - MinCutoff;
+            _isSetup = true;
+        }
+
+        private static void ReloadConfig()
+        {
+            var settingSource = SettingsCollection.FromFile(SharedConfig.SettingsFileName);
+
+            _colorIntervals = int.Parse(settingSource.Items.First(x => x.Key == SharedConfig.ColorIntervalsKey).CurrentValue);
+            _minCutoff = int.Parse(settingSource.Items.First(x => x.Key == SharedConfig.HeartRateGreenFloorKey).CurrentValue);
+            _maxCutoff = int.Parse(settingSource.Items.First(x => x.Key == SharedConfig.HeartRateRedCeilingKey).CurrentValue);
         }
 
         private static void BuildIntervalValues()

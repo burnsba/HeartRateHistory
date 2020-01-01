@@ -50,6 +50,8 @@ namespace HeartRateHistory.Windows
 
             _vm = new MainViewModel();
 
+            _vm.AppendDataMethod = HeartRateSlideChart.AppendData;
+
             DataContext = _vm;
         }
 

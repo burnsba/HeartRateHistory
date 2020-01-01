@@ -71,6 +71,7 @@ namespace HeartRateHistory.ViewModels
             {
                 SaveChanges();
                 parent.NotifyReloadConfig();
+                Converters.HeartRateRgbConverter.Setup();
                 CloseWindow(w);
             });
         }

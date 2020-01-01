@@ -1,14 +1,12 @@
-﻿using HeartRateHistory.HotConfig;
-using HeartRateHistory.HotConfig.DataSource;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Timers;
-using Windows.Devices.Bluetooth.Advertisement;
 using BurnsBac.WindowsHardware.Bluetooth;
+using HeartRateHistory.HotConfig;
 using HeartRateHistory.HotConfig.DataSource;
+using Windows.Devices.Bluetooth.Advertisement;
 
 namespace HeartRateHistory.DefaultConfigDataProviders
 {
@@ -91,7 +89,7 @@ namespace HeartRateHistory.DefaultConfigDataProviders
             System.Diagnostics.Debug.WriteLine(String.Format("  BT_ADDR: {0}", eventArgs.BluetoothAddress));
             System.Diagnostics.Debug.WriteLine(String.Format("  FR_NAME: {0}", eventArgs.Advertisement.LocalName));
             System.Diagnostics.Debug.WriteLine(String.Format("  ServiceUuids: {0}", String.Join(",", eventArgs.Advertisement.ServiceUuids.Select(x => x.ToString()))));
-            System.Diagnostics.Debug.WriteLine("");
+            System.Diagnostics.Debug.WriteLine(string.Empty);
         }
 
         /// <inheritdoc />

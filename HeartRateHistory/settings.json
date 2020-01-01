@@ -17,6 +17,54 @@
       "currentValue": "32"
     },
     {
+      "key": "HeartRateHistory.DataSeriesSaveFile",
+      "display": "Filename to save data series (date and time is appended to name, \".csv\" extension will be appended)",
+      "input": "textbox",
+      "datasource": null,
+      "assembly": null,
+      "currentValue": "heart-"
+    },
+    {
+      "key": "HeartRateHistory.DateTimeFormat",
+      "display": "Datetime format",
+      "input": "textbox",
+      "datasource": null,
+      "assembly": null,
+      "currentValue": "yyyMMdd-HHmmss"
+    },
+    {
+      "key": "HeartRateHistory.DataValueDisplayWidth",
+      "display": "Sliding chart single item width",
+      "input": "textbox",
+      "datasource": null,
+      "assembly": null,
+      "currentValue": "8"
+    },
+    {
+      "key": "HeartRateHistory.ColorIntervals",
+      "display": "Number of color intervals between green and red",
+      "input": "textbox",
+      "datasource": null,
+      "assembly": null,
+      "currentValue": "6"
+    },
+    {
+      "key": "HeartRateHistory.HeartRateGreenFloor",
+      "display": "Heart rate floor for green bar",
+      "input": "textbox",
+      "datasource": null,
+      "assembly": null,
+      "currentValue": "60"
+    },
+    {
+      "key": "HeartRateHistory.HeartRateRedCeiling",
+      "display": "Heart rate ceiling for red bar",
+      "input": "textbox",
+      "datasource": null,
+      "assembly": null,
+      "currentValue": "130"
+    },
+    {
       "key": "HeartRateHistory.DeviceAddress",
       "display": "Bluetooth device",
       "input": "dropdown",

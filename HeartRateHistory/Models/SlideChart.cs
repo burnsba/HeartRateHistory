@@ -11,7 +11,8 @@ namespace HeartRateHistory.Models
     {
         private object _dataLock = new object();
 
-        public ObservableCollection<SlideChartDataPoint> DataSeries { get; set; } = new ObservableCollection<SlideChartDataPoint>();
+        //public List<SlideChartDataPoint> DataSeries { get; set; } = new List<SlideChartDataPoint>();
+        private List<SlideChartDataPoint> _dataSeries = new List<SlideChartDataPoint>();
 
         public SlideChartDataPoint MostRecent { get; set; }
 
@@ -27,16 +28,16 @@ namespace HeartRateHistory.Models
 
         public int MaxDataItems { get; set; } = 1;
 
-        public void AppendDate(SlideChartDataPoint data)
+        public void AppendData(SlideChartDataPoint data)
         {
             lock (_dataLock)
             {
-                while (DataSeries.Count + 1 > MaxDataItems)
+                while (_dataSeries.Count + 1 > MaxDataItems)
                 {
-                    DataSeries.RemoveAt(0);
+                    _dataSeries.RemoveAt(0);
                 }
 
-                DataSeries.Add(data);
+                _dataSeries.Add(data);
             }
 
             MostRecent = data;
@@ -49,40 +50,42 @@ namespace HeartRateHistory.Models
 
             lock (_dataLock)
             {
-                for (int i = DataSeries.Count; i>0; i--)
-                {
-                    if (now.Subtract(DataSeries[i].CaptureTime).TotalSeconds > ageInSeconds)
-                    {
-                        DataSeries.RemoveAt(i);
-                    }
-                }
+                _dataSeries.RemoveAll(x => now.Subtract(x.CaptureTime).TotalSeconds > ageInSeconds);
+
+                //for (int i = DataSeries.Count; i > 0; i--)
+                //{
+                //    if (now.Subtract(DataSeries[i].CaptureTime).TotalSeconds > ageInSeconds)
+                //    {
+                //        DataSeries.RemoveAt(i);
+                //    }
+                //}
             }
         }
 
         public void WriteValuesToFile(string filename)
         {
-            using (System.IO.StreamWriter sw = new System.IO.StreamWriter(filename))
-            {
-                lock (_dataLock)
-                {
-                    var firstDate = DataSeries.Min(x => x.CaptureTime);
-                    var lastDate = DataSeries.Max(x => x.CaptureTime);
+            //using (System.IO.StreamWriter sw = new System.IO.StreamWriter(filename))
+            //{
+            //    lock (_dataLock)
+            //    {
+            //        var firstDate = _dataSeries.Min(x => x.CaptureTime);
+            //        var lastDate = _dataSeries.Max(x => x.CaptureTime);
 
-                    var firstline = $"#{firstDate.ToString(Config.DateTimeFormat)} - {lastDate.ToString(Config.DateTimeFormat)}, {DataSeries.Count()} values.";
+            //        var firstline = $"#{firstDate.ToString(Config.DateTimeFormat)} - {lastDate.ToString(Config.DateTimeFormat)}, {_dataSeries.Count()} values.";
 
-                    sw.WriteLine(firstline);
-                    sw.WriteLine(
-                        string.Join(",", DataSeries.OrderBy(x => x.CaptureTime).Select(x => x.Value))
-                        );
-                }
-            }
+            //        sw.WriteLine(firstline);
+            //        sw.WriteLine(
+            //            string.Join(",", _dataSeries.OrderBy(x => x.CaptureTime).Select(x => x.Value))
+            //            );
+            //    }
+            //}
         }
 
         public void Clear()
         {
             lock (_dataLock)
             {
-                DataSeries.Clear();
+                _dataSeries.Clear();
             }
 
             MostRecent = null;

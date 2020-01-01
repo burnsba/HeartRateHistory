@@ -29,9 +29,9 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <Button Grid.Column="0" Margin="6" Padding="12,8,12,8" Command="{Binding Path=SaveCommand}">Save</Button>
+                <Button Grid.Column="0" Margin="6" Padding="12,8,12,8" Command="{Binding Path=SaveCommand}" CommandParameter="{Binding ElementName=HeartRateSlideChart}">Save</Button>
                 <Button Grid.Column="1" Margin="6" Padding="12,8,12,8" Command="{Binding Path=PauseResumeCommand}" Content="{Binding Path=PauseResetText}"></Button>
-                <Button Grid.Column="2" Margin="6" Padding="12,8,12,8" Command="{Binding Path=ResetCommand}">Reset Chart</Button>
+                <Button Grid.Column="2" Margin="6" Padding="12,8,12,8" Command="{Binding Path=ResetCommand}" CommandParameter="{Binding ElementName=HeartRateSlideChart}">Reset Chart</Button>
                 <Button Grid.Column="3" Margin="6" Padding="12,8,12,8" Command="{Binding Path=ConnectDisconnectCommand}" Content="{Binding Path=ConnectDisconnectText}"></Button>
                 <Button Grid.Column="4" Margin="6" Padding="12,8,12,8" Command="{Binding Path=ReconnectCommand}">Reconnect</Button>
                 <TextBlock Grid.Column="5">Time since last value:</TextBlock>
@@ -39,7 +39,7 @@
             </Grid>
 
             <StackPanel Orientation="Horizontal">
-                <v:SlideChart></v:SlideChart>
+                <v:SlideChart x:Name="HeartRateSlideChart"></v:SlideChart>
 
                 <Grid>
                     <Grid.RowDefinitions>

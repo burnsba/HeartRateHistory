@@ -10,5 +10,15 @@
             Background="SeaGreen">
     <Grid>
         <TextBlock>text</TextBlock>
+        
+        <Grid Grid.Row="1" Grid.Column="0" MinHeight="220" Name="SeriesPanelContainer">
+            <Rectangle Name="RectLine150" Fill="#a1c5ff" Height="2" Margin="0,0,0,150" VerticalAlignment="Bottom"></Rectangle>
+            <Rectangle Name="RectLine125" Fill="#a1c5ff" Height="1" Margin="0,0,0,125" VerticalAlignment="Bottom"></Rectangle>
+            <Rectangle Name="RectLine100" Fill="#a1c5ff" Height="2" Margin="0,0,0,100" VerticalAlignment="Bottom"></Rectangle>
+            <Rectangle Name="RectLine75" Fill="#a1c5ff" Height="1" Margin="0,0,0,75" VerticalAlignment="Bottom"></Rectangle>
+            <Rectangle Name="RectLine50" Fill="#a1c5ff" Height="2" Margin="0,0,0,50" VerticalAlignment="Bottom"></Rectangle>
+            <StackPanel Orientation="Horizontal" Name="SeriesPanel" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,0,0" >
+            </StackPanel>
+        </Grid>
     </Grid>
 </UserControl>

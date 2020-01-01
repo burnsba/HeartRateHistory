@@ -110,6 +110,126 @@
             Gets or sets id to use.
             </summary>
         </member>
+        <member name="T:HeartRateHistory.Error.ActivationException">
+            <summary>
+            Exception when activating skin.
+            </summary>
+        </member>
+        <member name="M:HeartRateHistory.Error.ActivationException.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:HeartRateHistory.Error.ActivationException"/> class.
+            </summary>
+        </member>
+        <member name="M:HeartRateHistory.Error.ActivationException.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:HeartRateHistory.Error.ActivationException"/> class.
+            </summary>
+            <param name="message">Exception message.</param>
+        </member>
+        <member name="M:HeartRateHistory.Error.ActivationException.#ctor(System.String,System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:HeartRateHistory.Error.ActivationException"/> class.
+            </summary>
+            <param name="message">Exception message.</param>
+            <param name="innerException">Inner exception.</param>
+        </member>
+        <member name="M:HeartRateHistory.Error.ActivationException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Initializes a new instance of the <see cref="T:HeartRateHistory.Error.ActivationException"/> class.
+            </summary>
+            <param name="info">SerializationInfo.</param>
+            <param name="context">StreamingContext.</param>
+        </member>
+        <member name="T:HeartRateHistory.Error.GenericHardwareNotSupported">
+            <summary>
+            Exception when reading skin xml file, can not resolve hardware in xml to known type.
+            </summary>
+        </member>
+        <member name="M:HeartRateHistory.Error.GenericHardwareNotSupported.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:HeartRateHistory.Error.GenericHardwareNotSupported"/> class.
+            </summary>
+        </member>
+        <member name="M:HeartRateHistory.Error.GenericHardwareNotSupported.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:HeartRateHistory.Error.GenericHardwareNotSupported"/> class.
+            </summary>
+            <param name="message">Exception message.</param>
+        </member>
+        <member name="M:HeartRateHistory.Error.GenericHardwareNotSupported.#ctor(System.String,System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:HeartRateHistory.Error.GenericHardwareNotSupported"/> class.
+            </summary>
+            <param name="message">Exception message.</param>
+            <param name="innerException">Inner exception.</param>
+        </member>
+        <member name="M:HeartRateHistory.Error.GenericHardwareNotSupported.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Initializes a new instance of the <see cref="T:HeartRateHistory.Error.GenericHardwareNotSupported"/> class.
+            </summary>
+            <param name="info">SerializationInfo.</param>
+            <param name="context">StreamingContext.</param>
+        </member>
+        <member name="T:HeartRateHistory.Error.InvalidConfiguration">
+            <summary>
+            Exception when reading skin xml file.
+            </summary>
+        </member>
+        <member name="M:HeartRateHistory.Error.InvalidConfiguration.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:HeartRateHistory.Error.InvalidConfiguration"/> class.
+            </summary>
+        </member>
+        <member name="M:HeartRateHistory.Error.InvalidConfiguration.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:HeartRateHistory.Error.InvalidConfiguration"/> class.
+            </summary>
+            <param name="message">Exception message.</param>
+        </member>
+        <member name="M:HeartRateHistory.Error.InvalidConfiguration.#ctor(System.String,System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:HeartRateHistory.Error.InvalidConfiguration"/> class.
+            </summary>
+            <param name="message">Exception message.</param>
+            <param name="innerException">Inner exception.</param>
+        </member>
+        <member name="M:HeartRateHistory.Error.InvalidConfiguration.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Initializes a new instance of the <see cref="T:HeartRateHistory.Error.InvalidConfiguration"/> class.
+            </summary>
+            <param name="info">SerializationInfo.</param>
+            <param name="context">StreamingContext.</param>
+        </member>
+        <member name="T:HeartRateHistory.Error.UiNotSupported">
+            <summary>
+            Exception when reading skin xml file, can not ui display type to known type.
+            </summary>
+        </member>
+        <member name="M:HeartRateHistory.Error.UiNotSupported.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:HeartRateHistory.Error.UiNotSupported"/> class.
+            </summary>
+        </member>
+        <member name="M:HeartRateHistory.Error.UiNotSupported.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:HeartRateHistory.Error.UiNotSupported"/> class.
+            </summary>
+            <param name="message">Exception message.</param>
+        </member>
+        <member name="M:HeartRateHistory.Error.UiNotSupported.#ctor(System.String,System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:HeartRateHistory.Error.UiNotSupported"/> class.
+            </summary>
+            <param name="message">Exception message.</param>
+            <param name="innerException">Inner exception.</param>
+        </member>
+        <member name="M:HeartRateHistory.Error.UiNotSupported.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Initializes a new instance of the <see cref="T:HeartRateHistory.Error.UiNotSupported"/> class.
+            </summary>
+            <param name="info">SerializationInfo.</param>
+            <param name="context">StreamingContext.</param>
+        </member>
         <member name="T:HeartRateHistory.HotConfig.ConfigSettingBase">
             <summary>
             Single setting from the settings.json file. This is the UI item base class.
@@ -349,6 +469,55 @@
         <member name="M:HeartRateHistory.Models.SlideChartDataPoint.ToString">
             <inheritdoc />
         </member>
+        <member name="T:HeartRateHistory.TypeResolver">
+            <summary>
+            Core of this library. Instantiates correct hw/ui types from skin xml. Resolves
+            data sources from skin config json.
+            </summary>
+        </member>
+        <member name="F:HeartRateHistory.TypeResolver._eventSourceTypes">
+            <summary>
+            List of types of known input handlers.
+            </summary>
+        </member>
+        <member name="F:HeartRateHistory.TypeResolver._configDataProviderTypes">
+            <summary>
+            List of types of known config data providers.
+            </summary>
+        </member>
+        <member name="F:HeartRateHistory.TypeResolver._pluginsLoaded">
+            <summary>
+            Whether or not plugins have already been loaded.
+            </summary>
+        </member>
+        <member name="F:HeartRateHistory.TypeResolver._configDataProvidersLoaded">
+            <summary>
+            Whether or not data providers have already been loaded.
+            </summary>
+        </member>
+        <member name="M:HeartRateHistory.TypeResolver.GetConfigDataProviderType(System.String,System.String)">
+            <summary>
+            Resolves type name and assembly name to a type from the list
+            of known data provider types.
+            </summary>
+            <param name="shortTypeName">Type name without assembly or version.</param>
+            <param name="assemblyName">Name of hosting assembly.</param>
+            <returns>Type. First() is called, so this will throw an exception if not found.</returns>
+        </member>
+        <member name="M:HeartRateHistory.TypeResolver.CreateConfigDataProviderInstance(System.String,System.String)">
+            <summary>
+            Creates instance of skin data providor source.
+            </summary>
+            <param name="shortTypeName">Type name without assembly or version.</param>
+            <param name="assemblyName">Name of hosting assembly.</param>
+            <returns>New instance of data providor.</returns>
+        </member>
+        <member name="M:HeartRateHistory.TypeResolver.LoadConfigDataProviders">
+            <summary>
+            Loads assemblies from specified directory. Looks for items of type <see cref="T:HeartRateHistory.HotConfig.DataSource.IConfigDataProvider"/>.
+            This can only be performed once.
+            </summary>
+        </member>
         <member name="T:HeartRateHistory.ViewModels.ConfigViewModel">
             <summary>
             View model for skin config window.
@@ -447,6 +616,16 @@
             Reads app.config and sets global settings.
             </summary>
         </member>
+        <member name="M:HeartRateHistory.ViewModels.MainViewModel.Stop">
+            <inheritdoc />
+        </member>
+        <member name="M:HeartRateHistory.ViewModels.MainViewModel.InputEventMapper(System.Object,BurnsBac.WindowsHardware.Bluetooth.Characteristics.HeartRateMeasurement)">
+            <summary>
+            Accepts <see cref="T:BurnsBac.WindowsHardware.Bluetooth.Characteristics.HeartRateMeasurement"/> and translates to <see cref="!:GenericInputEventArgs"/>.
+            </summary>
+            <param name="sender">Sender.</param>
+            <param name="state">Event args.</param>
+        </member>
         <member name="T:HeartRateHistory.ViewModels.SkinConfigSettingDropdownViewModel">
             <summary>
             View model for skin config dropdown setting.
@@ -508,7 +687,7 @@
         </member>
         <member name="T:HeartRateHistory.Views.SlideChart">
             <summary>
-            Interaction logic for SlideChart.xaml
+            Interaction logic for SlideChart.xaml .
             </summary>
             <summary>
             SlideChart
