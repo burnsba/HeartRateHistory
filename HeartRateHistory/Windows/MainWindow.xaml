@@ -1,0 +1,67 @@
+﻿<Window x:Class="HeartRateHistory.Windows.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:gif="http://wpfanimatedgif.codeplex.com" 
+        xmlns:local="clr-namespace:HeartRateHistory.Windows"
+        xmlns:v="clr-namespace:HeartRateHistory.Views"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <StackPanel Orientation="Vertical">
+        <DockPanel>
+            <Menu DockPanel.Dock="Top">
+                <MenuItem Header="_Settings" Command="{Binding Path=ShowAppConfigWindowCommand}">
+                </MenuItem>
+            </Menu>
+        </DockPanel>
+
+        <StackPanel Orientation="Vertical">
+
+            <Grid Margin="10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="100" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0" Margin="6" Padding="12,8,12,8" Command="{Binding Path=SaveCommand}">Save</Button>
+                <Button Grid.Column="1" Margin="6" Padding="12,8,12,8" Command="{Binding Path=PauseResumeCommand}" Content="{Binding Path=PauseResetText}"></Button>
+                <Button Grid.Column="2" Margin="6" Padding="12,8,12,8" Command="{Binding Path=ResetCommand}">Reset Chart</Button>
+                <Button Grid.Column="3" Margin="6" Padding="12,8,12,8" Command="{Binding Path=ConnectDisconnectCommand}" Content="{Binding Path=ConnectDisconnectText}"></Button>
+                <Button Grid.Column="4" Margin="6" Padding="12,8,12,8" Command="{Binding Path=ReconnectCommand}">Reconnect</Button>
+                <TextBlock Grid.Column="5">Time since last value:</TextBlock>
+                <TextBlock Grid.Column="6" Padding="12,0,0,0" Text="{Binding Path=TimeSinceLastUpdate}"></TextBlock>
+            </Grid>
+
+            <StackPanel Orientation="Horizontal">
+                <v:SlideChart></v:SlideChart>
+
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="64" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Orientation="Horizontal" Grid.Row="0">
+                        <Image x:Name="ImageHeart" Width="64" Height="64" gif:ImageBehavior.AutoStart="False"></Image>
+                        <Image x:Name="ImageDataXfer" Width="64" Height="64" gif:ImageBehavior.AutoStart="False"></Image>
+                    </StackPanel>
+                    
+                    <TextBlock Grid.Row="1"
+                               VerticalAlignment="Center"
+                               Text="{Binding Path=CurrentHeartRate}"
+                               FontSize="{Binding Path=CurrentHeartRateFontSize}"
+                               FontFamily="{Binding Path=CurrentHeartRateFontFamily}"
+                               ></TextBlock>
+                    
+                </Grid>
+            </StackPanel>
+            
+        </StackPanel>
+    </StackPanel>
+</Window>

@@ -1,0 +1,66 @@
+﻿<UserControl x:Class="HeartRateHistory.Views.SlideChart_1"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:HeartRateHistory"
+             mc:Ignorable="d" 
+             d:DesignHeight="250"
+             d:DesignWidth="580"
+             MinHeight="250"
+             MinWidth="580"
+             SizeChanged="UserControl_SizeChanged">
+    <!--
+    <Grid ShowGridLines="False" Margin="4,4,4,4">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="280"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30" MinHeight="30"></RowDefinition>
+            <RowDefinition Height="*" MinHeight="220"></RowDefinition>
+        </Grid.RowDefinitions>
+
+         top row left
+        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="0">
+            <Button Name="Save" Content="Save" Margin="4" Click="Save_Click" FontFamily="Consolas"></Button>
+            <Button Name="PauseResume" Content="Pause" Margin="4" Click="PauseResume_Click" FontFamily="Consolas"></Button>
+            <Button Name="Reset" Content="Reset Chart" Margin="4" Click="Reset_Click" FontFamily="Consolas"></Button>
+            <Button Name="Reconnect" Content="Reconnect" Margin="4" Click="Reconnect_Click" FontFamily="Consolas"></Button>
+        </StackPanel>
+
+         top row right
+        <StackPanel Orientation="Horizontal" Grid.Row="0" Grid.Column="1">
+            <TextBlock Text="Seconds since update: " FontFamily="Consolas"></TextBlock>
+            <TextBlock Name="LastUpdateAgeSeconds" Text="0" FontFamily="Consolas"></TextBlock>
+        </StackPanel>
+
+         left main 
+        <Grid Grid.Row="1" Grid.Column="0" MinHeight="220" Name="SeriesPanelContainer">
+            <Rectangle Name="RectLine150" Fill="#a1c5ff" Height="2" Margin="0,0,0,150" VerticalAlignment="Bottom"></Rectangle>
+            <Rectangle Name="RectLine125" Fill="#a1c5ff" Height="1" Margin="0,0,0,125" VerticalAlignment="Bottom"></Rectangle>
+            <Rectangle Name="RectLine100" Fill="#a1c5ff" Height="2" Margin="0,0,0,100" VerticalAlignment="Bottom"></Rectangle>
+            <Rectangle Name="RectLine75" Fill="#a1c5ff" Height="1" Margin="0,0,0,75" VerticalAlignment="Bottom"></Rectangle>
+            <Rectangle Name="RectLine50" Fill="#a1c5ff" Height="2" Margin="0,0,0,50" VerticalAlignment="Bottom"></Rectangle>
+            <StackPanel Orientation="Horizontal" Name="SeriesPanel" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,0,0" >
+            </StackPanel>
+        </Grid>
+
+         right main 
+        <Grid Grid.Row="1" Grid.Column="1">
+            <TextBlock Name="DisplayLabelRight" Text="000" HorizontalAlignment="Left" VerticalAlignment="Bottom" FontFamily="Consolas" FontSize="140"/>
+            <Image HorizontalAlignment="Left" Margin="2,52,0,-27" VerticalAlignment="Top" Source="/WpfChart;component/img/heart.png" Panel.ZIndex="10" >
+                <Image.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform ScaleX="0.25" ScaleY="0.25"/>
+                        <SkewTransform/>
+                        <RotateTransform/>
+                        <TranslateTransform/>
+                    </TransformGroup>
+                </Image.RenderTransform>
+            </Image>
+        </Grid>
+
+    </Grid>
+-->
+</UserControl>

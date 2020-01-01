@@ -1,0 +1,28 @@
+{
+  "settings": [
+    {
+      "key": "HeartRateHistory.CurrentHeartRateFontFamily",
+      "display": "Display font",
+      "input": "textbox",
+      "datasource": null,
+      "assembly": null,
+      "currentValue": "Courier New"
+    },
+    {
+      "key": "HeartRateHistory.CurrentHeartRateFontSize",
+      "display": "Display font size",
+      "input": "textbox",
+      "datasource": null,
+      "assembly": null,
+      "currentValue": "32"
+    },
+    {
+      "key": "HeartRateHistory.DeviceAddress",
+      "display": "Bluetooth device",
+      "input": "dropdown",
+      "datasource": "DataProviders.BluetoothAddressProvider",
+      "assembly": "HeartRateHistory",
+      "currentValue": "251300765383294"
+    }
+  ]
+}
