@@ -14,7 +14,7 @@
       "input": "textbox",
       "datasource": null,
       "assembly": null,
-      "currentValue": "32"
+      "currentValue": "64"
     },
     {
       "key": "HeartRateHistory.DataSeriesSaveFile",
@@ -33,12 +33,36 @@
       "currentValue": "yyyMMdd-HHmmss"
     },
     {
+      "key": "HeartRateHistory.SlideChartBackgroundColor",
+      "display": "Chart area background color (6 digit hex)",
+      "input": "textbox",
+      "datasource": null,
+      "assembly": null,
+      "currentValue": "#dddddd"
+    },
+    {
+      "key": "HeartRateHistory.SlideChartDataLineColor",
+      "display": "Chart area interval line color (6 digit hex)",
+      "input": "textbox",
+      "datasource": null,
+      "assembly": null,
+      "currentValue": "#a1c5ff"
+    },
+    {
+      "key": "HeartRateHistory.SlideChartDataLineLabelColor",
+      "display": "Chart area interval line label color (6 digit hex)",
+      "input": "textbox",
+      "datasource": null,
+      "assembly": null,
+      "currentValue": "#999999"
+    },
+    {
       "key": "HeartRateHistory.DataValueDisplayWidth",
       "display": "Sliding chart single item width",
       "input": "textbox",
       "datasource": null,
       "assembly": null,
-      "currentValue": "8"
+      "currentValue": "18"
     },
     {
       "key": "HeartRateHistory.ColorIntervals",

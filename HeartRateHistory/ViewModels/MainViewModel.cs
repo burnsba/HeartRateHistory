@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Text;
+using System.Timers;
+using System.Windows.Controls;
 using System.Windows.Input;
 using BurnsBac.Mvvm;
 using BurnsBac.WindowsHardware.Bluetooth.Characteristics;
@@ -10,6 +12,7 @@ using BurnsBac.WindowsHardware.Bluetooth.Sensors;
 using HeartRateHistory.HotConfig;
 using HeartRateHistory.Models;
 using HeartRateHistory.Windows;
+using WpfAnimatedGif;
 
 namespace HeartRateHistory.ViewModels
 {
@@ -27,16 +30,24 @@ namespace HeartRateHistory.ViewModels
 
         private bool _isConnected = false;
         private bool _isConnecting = false;
+        private bool _isPaused = false;
 
-        private string _pauseResetText = PauseText;
+        private string _pauseResumeText = PauseText;
         private string _currentHeartRate = NoDataHeartRate;
-        private string _timeSinceLastUpdate = NoDataTimeSinceLastUpdate;
+        private string _timeSinceLastUpdateText = NoDataTimeSinceLastUpdate;
         private int _currentHeartRateFontSize = 32;
         private System.Windows.Media.FontFamily _currentHeartRateFontFamily = new System.Windows.Media.FontFamily("Segoe UI");
         private ulong _bluetoothDeviceAddress;
         private string _dataSeriesSaveFile;
+        private int _lastReadValue = -1;
 
+        private DateTime _timeSinceLastUpdate = DateTime.MinValue;
+
+        private Timer _heartPumpTimer;
+        private Timer _timeSinceUpdateTimer;
         private LowEnergyHeartrateSensor _heartRateSensor;
+
+        private SettingsCollection _settingsSource;
 
         public MainViewModel()
         {
@@ -44,12 +55,24 @@ namespace HeartRateHistory.ViewModels
 
             ShowAppConfigWindowCommand = new CommandHandler(() => Workspace.CreateSingletonWindow<ConfigWindow>(this));
 
-            PauseResumeCommand = new CommandHandler(() => { }, x => IsConnected);
+            PauseResumeCommand = new CommandHandler(PauseResumeCommandAction, x => IsConnected);
             ConnectDisconnectCommand = new CommandHandler(ConnectDisconnectCommandAction, x => GetCanConnectDisconnect());
             ReconnectCommand = new CommandHandler(() => { }, x => IsConnected);
 
-            ResetCommand = new RelayCommand<ITimeSeriesChart>(x => x.Clear());
-            SaveCommand = new RelayCommand<ITimeSeriesChart>(x => x.WriteValuesToFile(DataSeriesSaveFile));
+            ResetCommand = new CommandHandler(() => SlideChartViewModel.Clear());
+            SaveCommand = new CommandHandler(() => SlideChartViewModel.WriteValuesToFile(DataSeriesSaveFile));
+
+            _heartPumpTimer = new Timer();
+            _heartPumpTimer.AutoReset = true;
+            _heartPumpTimer.Interval = 5000;
+            _heartPumpTimer.Elapsed += HeartPumpTimer_Elapsed;
+
+            _timeSinceUpdateTimer = new Timer();
+            _timeSinceUpdateTimer.AutoReset = true;
+            _timeSinceUpdateTimer.Interval = 1000;
+            _timeSinceUpdateTimer.Elapsed += TimeSinceUpdateTimer_Elapsed;
+
+            SlideChartViewModel = new SlideChartViewModel(_settingsSource);
         }
 
         public bool IsConnected
@@ -65,7 +88,7 @@ namespace HeartRateHistory.ViewModels
                 OnPropertyChanged(nameof(IsConnected));
                 OnPropertyChanged(nameof(CanConnect));
                 OnPropertyChanged(nameof(ConnectDisconnectText));
-                OnPropertyChanged(nameof(PauseResetText));
+                OnPropertyChanged(nameof(PauseResumeText));
 
                 CommandManager.InvalidateRequerySuggested();
             }
@@ -84,7 +107,7 @@ namespace HeartRateHistory.ViewModels
                 OnPropertyChanged(nameof(IsConnecting));
                 OnPropertyChanged(nameof(CanConnect));
                 OnPropertyChanged(nameof(ConnectDisconnectText));
-                OnPropertyChanged(nameof(PauseResetText));
+                OnPropertyChanged(nameof(PauseResumeText));
 
                 CommandManager.InvalidateRequerySuggested();
             }
@@ -108,6 +131,10 @@ namespace HeartRateHistory.ViewModels
         public ICommand ConnectDisconnectCommand { get; set; }
 
         public ICommand ReconnectCommand { get; set; }
+
+        public Action PlayOnceImageDataXfer { get; set; }
+        public Action StopAnimations { get; set; }
+        public Action<int> ChangeHeartRateImageBpm { get; set; }
 
         public string ConnectDisconnectText
         {
@@ -142,17 +169,18 @@ namespace HeartRateHistory.ViewModels
             }
         }
 
-        public string PauseResetText
+        public string PauseResumeText
         {
             get
             {
-                return _pauseResetText;
-            }
-
-            set
-            {
-                _pauseResetText = value;
-                OnPropertyChanged(nameof(PauseResetText));
+                if (_isPaused)
+                {
+                    return ResumeText;
+                }
+                else
+                {
+                    return PauseText;
+                }
             }
         }
 
@@ -160,12 +188,12 @@ namespace HeartRateHistory.ViewModels
         {
             get
             {
-                return _timeSinceLastUpdate;
+                return _timeSinceLastUpdateText;
             }
 
             set
             {
-                _timeSinceLastUpdate = value;
+                _timeSinceLastUpdateText = value;
                 OnPropertyChanged(nameof(TimeSinceLastUpdate));
             }
         }
@@ -213,12 +241,6 @@ namespace HeartRateHistory.ViewModels
             }
         }
 
-        public Func<SlideChartDataPoint, bool> AppendDataMethod
-        {
-            get;
-            set;
-        }
-
         public string DataSeriesSaveFile
         {
             get
@@ -234,9 +256,13 @@ namespace HeartRateHistory.ViewModels
             }
         }
 
+        public SlideChartViewModel SlideChartViewModel { get; set; }
+
         public void NotifyReloadConfig()
         {
             ReadConfig();
+
+            SlideChartViewModel.NotifyReloadConfig();
         }
 
         /// <summary>
@@ -244,12 +270,12 @@ namespace HeartRateHistory.ViewModels
         /// </summary>
         private void ReadConfig()
         {
-            var settingSource = SettingsCollection.FromFile(SharedConfig.SettingsFileName);
+            _settingsSource = SettingsCollection.FromFile(SharedConfig.SettingsFileName);
 
-            CurrentHeartRateFontFamily = new System.Windows.Media.FontFamily(settingSource.Items.First(x => x.Key == SharedConfig.CurrentHeartRateFontFamilyKey).CurrentValue);
-            CurrentHeartRateFontSize = int.Parse(settingSource.Items.First(x => x.Key == SharedConfig.CurrentHeartRateFontSizeKey).CurrentValue);
-            BluetoothDeviceAddress = ulong.Parse(settingSource.Items.First(x => x.Key == SharedConfig.BluetoothDeviceAddressKey).CurrentValue);
-            DataSeriesSaveFile = settingSource.Items.First(x => x.Key == SharedConfig.DataSeriesSaveFileKey).CurrentValue;
+            CurrentHeartRateFontFamily = new System.Windows.Media.FontFamily(_settingsSource.Items.First(x => x.Key == SharedConfig.CurrentHeartRateFontFamilyKey).CurrentValue);
+            CurrentHeartRateFontSize = int.Parse(_settingsSource.Items.First(x => x.Key == SharedConfig.CurrentHeartRateFontSizeKey).CurrentValue);
+            BluetoothDeviceAddress = ulong.Parse(_settingsSource.Items.First(x => x.Key == SharedConfig.BluetoothDeviceAddressKey).CurrentValue);
+            DataSeriesSaveFile = _settingsSource.Items.First(x => x.Key == SharedConfig.DataSeriesSaveFileKey).CurrentValue;
         }
 
         public async void Start()
@@ -269,11 +295,14 @@ namespace HeartRateHistory.ViewModels
             await _heartRateSensor.FindCharacteristic();
             await _heartRateSensor.EnableNotifications();
 
+            _timeSinceUpdateTimer.Start();
+            _heartPumpTimer.Start();
+            _isPaused = false;
+
             IsConnecting = false;
             IsConnected = true;
         }
 
-        /// <inheritdoc />
         public async void Stop()
         {
             if (object.ReferenceEquals(null, _heartRateSensor))
@@ -287,6 +316,15 @@ namespace HeartRateHistory.ViewModels
 
             _heartRateSensor.Dispose();
             _heartRateSensor = null;
+
+            StopAnimations();
+
+            _timeSinceUpdateTimer.Stop();
+            _heartPumpTimer.Stop();
+            _lastReadValue = -1;
+
+            TimeSinceLastUpdate = NoDataTimeSinceLastUpdate;
+            CurrentHeartRate = NoDataHeartRate;
 
             IsConnected = false;
         }
@@ -302,22 +340,19 @@ namespace HeartRateHistory.ViewModels
             {
                 return;
             }
-            
-            var dp = new SlideChartDataPoint(DateTime.Now, state.HeartRate);
-            AppendDataMethod(dp);
 
-            CurrentHeartRate = dp.Value.ToString();
+            if (!_isPaused)
+            {
+                var dp = new SlideChartDataPoint(DateTime.Now, state.HeartRate);
+                SlideChartViewModel.AppendData(dp);
+            }
 
-            //if (!AnyEventListeners())
-            //{
-            //    return;
-            //}
+            CurrentHeartRate = state.HeartRate.ToString();
 
-            //var genArgs = new GenericInputEventArgs();
+            PlayOnceImageDataXfer();
 
-            //genArgs.RangeableInputs.Add(new GenericIntRangeableInput(state.HeartRate) { Id = 1 });
-
-            //FireEventHandler(sender, genArgs);
+            _timeSinceLastUpdate = DateTime.Now;
+            _lastReadValue = state.HeartRate;
         }
 
         private void ConnectDisconnectCommandAction()
@@ -332,6 +367,12 @@ namespace HeartRateHistory.ViewModels
             }
         }
 
+        private void PauseResumeCommandAction()
+        {
+            _isPaused = !_isPaused;
+            OnPropertyChanged(nameof(PauseResumeText));
+        }
+
         private bool GetCanConnectDisconnect()
         {
             if (!IsConnected)
@@ -344,6 +385,23 @@ namespace HeartRateHistory.ViewModels
                 // Connected. Can you disconnect?
                 return true;
             }
+        }
+
+        private void TimeSinceUpdateTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            if (_timeSinceLastUpdate > DateTime.MinValue)
+            {
+                TimeSinceLastUpdate = (DateTime.Now - _timeSinceLastUpdate).TotalSeconds.ToString();
+            }
+            else
+            {
+                TimeSinceLastUpdate = NoDataTimeSinceLastUpdate;
+            }
+        }
+
+        private void HeartPumpTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            ChangeHeartRateImageBpm(_lastReadValue);
         }
     }
 }

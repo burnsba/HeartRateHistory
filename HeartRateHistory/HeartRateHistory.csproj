@@ -18,6 +18,8 @@
 
   <ItemGroup>
     <None Remove="img\dataxfer.gif" />
+    <None Remove="img\dataxfer_reverse2.gif" />
+    <None Remove="img\dataxfer_reverse3.gif" />
     <None Remove="img\heart.gif" />
   </ItemGroup>
 
@@ -57,6 +59,8 @@
 
   <ItemGroup>
     <Resource Include="img\dataxfer.gif" />
+    <Resource Include="img\dataxfer_reverse2.gif" />
+    <Resource Include="img\dataxfer_reverse3.gif" />
     <Resource Include="img\heart.gif" />
   </ItemGroup>
 

@@ -4,21 +4,65 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:HeartRateHistory.Views"
+             xmlns:c="clr-namespace:HeartRateHistory.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="200" d:DesignWidth="300"
-             
-            Background="SeaGreen">
+             Name="SlideChartX"
+             SizeChanged="SlideChart_SizeChanged"
+             Background="{Binding Path=BackgroundColor}">
+    <UserControl.Resources>
+        <c:SlideChartDataPointToRectangleConverter x:Key="scdptrc" />
+        <c:SlideChartDataPointToRectangleMultiConverter x:Key="scdptrmc" />
+
+        <DataTemplate x:Key="SeriesPanelDataTemplate">
+            <ContentControl>
+                <ContentControl.Content>
+                    <MultiBinding Converter="{StaticResource scdptrmc}">
+                        <Binding />
+                        <Binding ElementName="SlideChartX" Path="DataContext" />
+                    </MultiBinding>
+                </ContentControl.Content>
+            </ContentControl>
+        </DataTemplate>
+    </UserControl.Resources>
+    
     <Grid>
-        <TextBlock>text</TextBlock>
-        
         <Grid Grid.Row="1" Grid.Column="0" MinHeight="220" Name="SeriesPanelContainer">
-            <Rectangle Name="RectLine150" Fill="#a1c5ff" Height="2" Margin="0,0,0,150" VerticalAlignment="Bottom"></Rectangle>
-            <Rectangle Name="RectLine125" Fill="#a1c5ff" Height="1" Margin="0,0,0,125" VerticalAlignment="Bottom"></Rectangle>
-            <Rectangle Name="RectLine100" Fill="#a1c5ff" Height="2" Margin="0,0,0,100" VerticalAlignment="Bottom"></Rectangle>
-            <Rectangle Name="RectLine75" Fill="#a1c5ff" Height="1" Margin="0,0,0,75" VerticalAlignment="Bottom"></Rectangle>
-            <Rectangle Name="RectLine50" Fill="#a1c5ff" Height="2" Margin="0,0,0,50" VerticalAlignment="Bottom"></Rectangle>
-            <StackPanel Orientation="Horizontal" Name="SeriesPanel" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,0,0" >
-            </StackPanel>
+
+            <Rectangle Name="RectLine150" Fill="{Binding Path=BackgroundDataLineColor, Mode=OneWay}" Height="2" Margin="0,0,0,150" VerticalAlignment="Bottom"></Rectangle>
+            <Rectangle Name="RectLine125" Fill="{Binding Path=BackgroundDataLineColor, Mode=OneWay}" Height="1" Margin="0,0,0,125" VerticalAlignment="Bottom"></Rectangle>
+            <Rectangle Name="RectLine100" Fill="{Binding Path=BackgroundDataLineColor, Mode=OneWay}" Height="2" Margin="0,0,0,100" VerticalAlignment="Bottom"></Rectangle>
+            <Rectangle Name="RectLine75" Fill="{Binding Path=BackgroundDataLineColor, Mode=OneWay}" Height="1" Margin="0,0,0,75" VerticalAlignment="Bottom"></Rectangle>
+            <Rectangle Name="RectLine50" Fill="{Binding Path=BackgroundDataLineColor, Mode=OneWay}" Height="2" Margin="0,0,0,50" VerticalAlignment="Bottom"></Rectangle>
+
+            <Label Name="RectLine150Label" Foreground="{Binding Path=BackgroundDataLineLabelColor, Mode=OneWay}" Margin="0,0,0,139" VerticalAlignment="Bottom">150</Label>
+            <Label Name="RectLine125Label" Foreground="{Binding Path=BackgroundDataLineLabelColor, Mode=OneWay}" Margin="0,0,0,114" VerticalAlignment="Bottom">125</Label>
+            <Label Name="RectLine100Label" Foreground="{Binding Path=BackgroundDataLineLabelColor, Mode=OneWay}" Margin="0,0,0,89" VerticalAlignment="Bottom">100</Label>
+            <Label Name="RectLine75Label" Foreground="{Binding Path=BackgroundDataLineLabelColor, Mode=OneWay}" Margin="0,0,0,64" VerticalAlignment="Bottom">75</Label>
+            <Label Name="RectLine50Label" Foreground="{Binding Path=BackgroundDataLineLabelColor, Mode=OneWay}" Margin="0,0,0,39" VerticalAlignment="Bottom">50</Label>
+
+            <ItemsControl
+                ItemsSource="{Binding Path=VisibleDataSeries}"
+                ItemTemplate="{StaticResource SeriesPanelDataTemplate}"
+                >
+                
+                <ItemsControl.Style>
+                    <Style TargetType="{x:Type ItemsControl}">
+                        <Setter Property="ItemsPanel">
+                            <Setter.Value>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal"
+                                                HorizontalAlignment="Right"
+                                                VerticalAlignment="Bottom"
+                                                Margin="0,0,0,0"
+                                                
+                                                ></StackPanel>
+                                </ItemsPanelTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ItemsControl.Style>
+            </ItemsControl>
         </Grid>
     </Grid>
 </UserControl>

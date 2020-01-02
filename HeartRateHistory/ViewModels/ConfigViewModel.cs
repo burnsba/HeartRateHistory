@@ -43,7 +43,6 @@ namespace HeartRateHistory.ViewModels
         /// <param name="askv">Source info.</param>
         public ConfigViewModel(MainViewModel parent)
         {
-            //DisplayName = askv.DisplayName;
             _settingSource = SettingsCollection.FromFile(SharedConfig.SettingsFileName);
 
             if (!object.ReferenceEquals(null, _settingSource))

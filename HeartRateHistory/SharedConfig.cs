@@ -17,5 +17,8 @@ namespace HeartRateHistory
         public const string ColorIntervalsKey = "HeartRateHistory.ColorIntervals";
         public const string HeartRateGreenFloorKey = "HeartRateHistory.HeartRateGreenFloor";
         public const string HeartRateRedCeilingKey = "HeartRateHistory.HeartRateRedCeiling";
+        public const string SlideChartBackgroundColorKey = "HeartRateHistory.SlideChartBackgroundColor";
+        public const string SlideChartDataLineColorKey = "HeartRateHistory.SlideChartDataLineColor";
+        public const string SlideChartDataLineLabelColorKey = "HeartRateHistory.SlideChartDataLineLabelColor";
     }
 }

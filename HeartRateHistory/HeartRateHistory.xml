@@ -49,6 +49,70 @@
             <param name="ex">Exception to convert.</param>
             <returns>Contents of exception and all inner exceptions.</returns>
         </member>
+        <member name="T:HeartRateHistory.Converters.SlideChartDataPointToRectangleConverter">
+            <summary>
+            Converts bool to visibility status.
+            </summary>
+        </member>
+        <member name="M:HeartRateHistory.Converters.SlideChartDataPointToRectangleConverter.Convert(System.Object,System.Type,System.Object,System.Globalization.CultureInfo)">
+            <summary>
+            Converts SlideChartDataPoint to Rectangle.
+            </summary>
+            <param name="value">Value to convert (bool).</param>
+            <param name="targetType">Type to convert to (Visibility).</param>
+            <param name="parameter">Convert parameter.</param>
+            <param name="culture">Convert culture.</param>
+            <returns>
+            Visibility status.
+            </returns>
+        </member>
+        <member name="M:HeartRateHistory.Converters.SlideChartDataPointToRectangleConverter.ConvertBack(System.Object,System.Type,System.Object,System.Globalization.CultureInfo)">
+            <summary>
+            NotSupported.
+            </summary>
+            <param name="value">Value to convert (System.Windows.Shapes.Rectangle).</param>
+            <param name="targetType">Type to convert to (SlideChartDataPoint).</param>
+            <param name="parameter">Convert parameter.</param>
+            <param name="culture">Convert culture.</param>
+            <returns>
+            bool.
+            </returns>
+            <remarks>
+            Converts System.Windows.Shapes.Rectangle to SlideChartDataPoint.
+            </remarks>
+        </member>
+        <member name="T:HeartRateHistory.Converters.SlideChartDataPointToRectangleMultiConverter">
+            <summary>
+            Converts bool to visibility status.
+            </summary>
+        </member>
+        <member name="M:HeartRateHistory.Converters.SlideChartDataPointToRectangleMultiConverter.Convert(System.Object[],System.Type,System.Object,System.Globalization.CultureInfo)">
+            <summary>
+            Converts SlideChartDataPoint to Rectangle.
+            </summary>
+            <param name="values">Value to convert (SlideChartDataPoint).</param>
+            <param name="targetType">Type to convert to (Rectangle).</param>
+            <param name="parameter">Convert parameter.</param>
+            <param name="culture">Convert culture.</param>
+            <returns>
+            Visibility status.
+            </returns>
+        </member>
+        <member name="M:HeartRateHistory.Converters.SlideChartDataPointToRectangleMultiConverter.ConvertBack(System.Object,System.Type[],System.Object,System.Globalization.CultureInfo)">
+            <summary>
+            NotSupported.
+            </summary>
+            <param name="value">Value to convert (System.Windows.Shapes.Rectangle).</param>
+            <param name="targetTypes">Type to convert to (SlideChartDataPoint).</param>
+            <param name="parameter">Convert parameter.</param>
+            <param name="culture">Convert culture.</param>
+            <returns>
+            bool.
+            </returns>
+            <remarks>
+            Converts System.Windows.Shapes.Rectangle to SlideChartDataPoint.
+            </remarks>
+        </member>
         <member name="T:HeartRateHistory.DefaultConfigDataProviders.BluetoothAddressProvider">
             <summary>
             Scans for connected bluetooth devices.
@@ -616,9 +680,6 @@
             Reads app.config and sets global settings.
             </summary>
         </member>
-        <member name="M:HeartRateHistory.ViewModels.MainViewModel.Stop">
-            <inheritdoc />
-        </member>
         <member name="M:HeartRateHistory.ViewModels.MainViewModel.InputEventMapper(System.Object,BurnsBac.WindowsHardware.Bluetooth.Characteristics.HeartRateMeasurement)">
             <summary>
             Accepts <see cref="T:BurnsBac.WindowsHardware.Bluetooth.Characteristics.HeartRateMeasurement"/> and translates to <see cref="!:GenericInputEventArgs"/>.
@@ -684,6 +745,36 @@
         </member>
         <member name="M:HeartRateHistory.ViewModels.SkinConfigSettingTextboxViewModel.Dispose">
             <inheritdoc />
+        </member>
+        <member name="P:HeartRateHistory.ViewModels.SlideChartViewModel.BackgroundColorString">
+            <summary>
+            Gets or sets the main window background color, as a hex code string.
+            </summary>
+        </member>
+        <member name="P:HeartRateHistory.ViewModels.SlideChartViewModel.BackgroundColor">
+            <summary>
+            Gets or sets the main window background color.
+            </summary>
+        </member>
+        <member name="P:HeartRateHistory.ViewModels.SlideChartViewModel.BackgroundDataLineColorString">
+            <summary>
+            Gets or sets the chart area interval line color, as a hex code string.
+            </summary>
+        </member>
+        <member name="P:HeartRateHistory.ViewModels.SlideChartViewModel.BackgroundDataLineColor">
+            <summary>
+            Gets or sets the chart area interval line color.
+            </summary>
+        </member>
+        <member name="P:HeartRateHistory.ViewModels.SlideChartViewModel.BackgroundDataLineLabelColorString">
+            <summary>
+            Gets or sets the chart area data interval label color, as a hex code string.
+            </summary>
+        </member>
+        <member name="P:HeartRateHistory.ViewModels.SlideChartViewModel.BackgroundDataLineLabelColor">
+            <summary>
+            Gets or sets the chart area interval line color.
+            </summary>
         </member>
         <member name="T:HeartRateHistory.Views.SlideChart">
             <summary>
