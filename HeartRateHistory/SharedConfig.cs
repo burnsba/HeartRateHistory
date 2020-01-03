@@ -20,5 +20,7 @@ namespace HeartRateHistory
         public const string SlideChartBackgroundColorKey = "HeartRateHistory.SlideChartBackgroundColor";
         public const string SlideChartDataLineColorKey = "HeartRateHistory.SlideChartDataLineColor";
         public const string SlideChartDataLineLabelColorKey = "HeartRateHistory.SlideChartDataLineLabelColor";
+        public const string MaxItemsDisplayedKey = "HeartRateHistory.MaxItemsDisplayed";
+        public const string MaxItemsInMemoryKey = "HeartRateHistory.MaxItemsInMemory";
     }
 }

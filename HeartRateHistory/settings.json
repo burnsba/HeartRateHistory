@@ -17,6 +17,22 @@
       "currentValue": "64"
     },
     {
+      "key": "HeartRateHistory.MaxItemsDisplayed",
+      "display": "Maximum number of bars that will be drawn on screen",
+      "input": "textbox",
+      "datasource": null,
+      "assembly": null,
+      "currentValue": "60"
+    },
+    {
+      "key": "HeartRateHistory.MaxItemsInMemory",
+      "display": "Max number of items to keep in memory (and written to file on save)",
+      "input": "textbox",
+      "datasource": null,
+      "assembly": null,
+      "currentValue": "10000"
+    },
+    {
       "key": "HeartRateHistory.DataSeriesSaveFile",
       "display": "Filename to save data series (date and time is appended to name, \".csv\" extension will be appended)",
       "input": "textbox",

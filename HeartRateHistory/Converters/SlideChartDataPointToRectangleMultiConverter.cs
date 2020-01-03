@@ -57,6 +57,7 @@ namespace HeartRateHistory.Converters
             r.Width = vm.DataValueDisplayWidth;
             r.Height = rectHeight;
             r.VerticalAlignment = VerticalAlignment.Bottom;
+            r.ToolTip = scdp.ToString();
             r.Tag = scdp;
 
             return r;

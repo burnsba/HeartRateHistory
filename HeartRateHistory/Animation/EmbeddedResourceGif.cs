@@ -11,10 +11,6 @@ namespace HeartRateHistory.Animation
 {
     public class EmbeddedResourceGif : IDisposable
     {
-        public string EmbeddedResourcePath { get; set; }
-
-        public List<EmbeddedResourceGifFrame> Frames { get; set; }
-
         public EmbeddedResourceGif(string embeddedResourcePath)
         {
             Frames = new List<EmbeddedResourceGifFrame>();
@@ -31,6 +27,34 @@ namespace HeartRateHistory.Animation
                     Frames.Add(new EmbeddedResourceGifFrame(i, img));
                 }
             }
+        }
+
+        public string EmbeddedResourcePath { get; set; }
+
+        public List<EmbeddedResourceGifFrame> Frames { get; set; }
+
+        public void Dispose()
+        {
+            if (!object.ReferenceEquals(null, Frames))
+            {
+                foreach (var frame in Frames)
+                {
+                    frame.Dispose();
+                }
+            }
+        }
+
+        public Storyboard MakeWpfImageStoryboard(System.Windows.Controls.Image wpfImage, TimeSpan totalDuration)
+        {
+            var sb = new Storyboard();
+            var animation = ToAnimationFlat(totalDuration);
+
+            Storyboard.SetTarget(animation, wpfImage);
+            Storyboard.SetTargetProperty(animation, new PropertyPath(Image.SourceProperty));
+
+            sb.Children.Add(animation);
+
+            return sb;
         }
 
         private ObjectAnimationUsingKeyFrames ToAnimationFlat(TimeSpan totalDuration)
@@ -50,30 +74,6 @@ namespace HeartRateHistory.Animation
             oaukf.Duration = current;
 
             return oaukf;
-        }
-
-        public Storyboard MakeWpfImageStoryboard(System.Windows.Controls.Image wpfImage, TimeSpan totalDuration)
-        {
-            var sb = new Storyboard();
-            var animation = ToAnimationFlat(totalDuration);
-
-            Storyboard.SetTarget(animation, wpfImage);
-            Storyboard.SetTargetProperty(animation, new PropertyPath(Image.SourceProperty));
-
-            sb.Children.Add(animation);
-
-            return sb;
-        }
-
-        public void Dispose()
-        {
-            if (!object.ReferenceEquals(null, Frames))
-            {
-                foreach (var frame in Frames)
-                {
-                    frame.Dispose();
-                }
-            }
         }
     }
 }

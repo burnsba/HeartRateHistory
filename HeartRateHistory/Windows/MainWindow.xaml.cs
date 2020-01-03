@@ -32,13 +32,12 @@ namespace HeartRateHistory.Windows
     /// </summary>
     public partial class MainWindow : Window
     {
-        private MainViewModel _vm;
-
-        private static readonly TimeSpan HeartGifNaturalDuration = new TimeSpan(0, 0, 1);
         private static readonly TimeSpan DataXferGifNaturalDuration = new TimeSpan(0, 0, 0, 4, 0);
+        private static readonly TimeSpan HeartGifNaturalDuration = new TimeSpan(0, 0, 1);
 
-        private Storyboard _heartStoryboard;
         private Storyboard _datxferStoryboard;
+        private Storyboard _heartStoryboard;
+        private MainViewModel _vm;
 
         public MainWindow()
         {
@@ -72,28 +71,6 @@ namespace HeartRateHistory.Windows
             dataxferAnimation.Dispose();
         }
 
-        private void PlayOnceImageDataXfer()
-        {
-            Dispatcher.Invoke(() =>
-            {
-                _datxferStoryboard.Pause(ImageDataXfer);
-                _datxferStoryboard.Seek(ImageDataXfer, TimeSpan.Zero, TimeSeekOrigin.BeginTime);
-                _datxferStoryboard.Resume(ImageDataXfer);
-            });
-        }
-
-        private void StopAnimations()
-        {
-            Dispatcher.Invoke(() =>
-            {
-                _heartStoryboard.Pause(ImageHeart);
-                _heartStoryboard.Seek(ImageHeart, TimeSpan.Zero, TimeSeekOrigin.BeginTime);
-
-                _datxferStoryboard.Pause(ImageDataXfer);
-                _datxferStoryboard.Seek(ImageDataXfer, TimeSpan.Zero, TimeSeekOrigin.BeginTime);
-            });
-        }
-
         private void ChangeHeartRateImageBpm(int bpm)
         {
             if (bpm < 1)
@@ -118,6 +95,28 @@ namespace HeartRateHistory.Windows
                 _heartStoryboard.SpeedRatio = scaleFactor;
                 _heartStoryboard.Begin(ImageHeart, true);
                 _heartStoryboard.Seek(currentTime);
+            });
+        }
+
+        private void PlayOnceImageDataXfer()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                _datxferStoryboard.Pause(ImageDataXfer);
+                _datxferStoryboard.Seek(ImageDataXfer, TimeSpan.Zero, TimeSeekOrigin.BeginTime);
+                _datxferStoryboard.Resume(ImageDataXfer);
+            });
+        }
+
+        private void StopAnimations()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                _heartStoryboard.Pause(ImageHeart);
+                _heartStoryboard.Seek(ImageHeart, TimeSpan.Zero, TimeSeekOrigin.BeginTime);
+
+                _datxferStoryboard.Pause(ImageDataXfer);
+                _datxferStoryboard.Seek(ImageDataXfer, TimeSpan.Zero, TimeSeekOrigin.BeginTime);
             });
         }
     }

@@ -26,6 +26,7 @@ namespace HeartRateHistory.ViewModels
         private const string PauseText = "Pause";
         private const string ResumeText = "Resume";
         private ulong _bluetoothDeviceAddress;
+        private Timer _connectionWatchdogTimer;
         private string _currentHeartRate = NoDataHeartRate;
         private System.Windows.Media.FontFamily _currentHeartRateFontFamily = new System.Windows.Media.FontFamily("Segoe UI");
         private int _currentHeartRateFontSize = 32;
@@ -42,7 +43,6 @@ namespace HeartRateHistory.ViewModels
         private DateTime _timeSinceLastUpdate = DateTime.MinValue;
         private string _timeSinceLastUpdateText = NoDataTimeSinceLastUpdate;
         private Timer _timeSinceUpdateTimer;
-        private Timer _connectionWatchdogTimer;
 
         public MainViewModel()
         {
@@ -73,13 +73,6 @@ namespace HeartRateHistory.ViewModels
             _connectionWatchdogTimer.Elapsed += ConnectionWatchdogTimer_Elapsed;
 
             SlideChartViewModel = new SlideChartViewModel(_settingsSource);
-        }
-
-        private void ConnectionWatchdogTimer_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            // throw new NotImplementedException();
-            System.Diagnostics.Debug.WriteLine("ConnectionWatchdogTimer_Elapsed");
-            _connectionWatchdogTimer.Start();
         }
 
         public ulong BluetoothDeviceAddress
@@ -224,6 +217,7 @@ namespace HeartRateHistory.ViewModels
         }
 
         public ICommand PauseResumeCommand { get; set; }
+
         public string PauseResumeText
         {
             get
@@ -240,12 +234,19 @@ namespace HeartRateHistory.ViewModels
         }
 
         public Action PlayOnceImageDataXfer { get; set; }
+
         public ICommand ReconnectCommand { get; set; }
+
         public ICommand ResetCommand { get; set; }
+
         public ICommand SaveCommand { get; set; }
+
         public ICommand ShowAppConfigWindowCommand { get; set; }
+
         public SlideChartViewModel SlideChartViewModel { get; set; }
+
         public Action StopAnimations { get; set; }
+
         public string TimeSinceLastUpdate
         {
             get
@@ -346,6 +347,13 @@ namespace HeartRateHistory.ViewModels
             {
                 Stop();
             }
+        }
+
+        private void ConnectionWatchdogTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            // throw new NotImplementedException();
+            System.Diagnostics.Debug.WriteLine("ConnectionWatchdogTimer_Elapsed");
+            _connectionWatchdogTimer.Start();
         }
 
         private bool GetCanConnectDisconnect()

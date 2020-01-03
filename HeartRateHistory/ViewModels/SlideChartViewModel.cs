@@ -29,11 +29,13 @@ namespace HeartRateHistory.ViewModels
 
         private object _dataLock = new object();
 
-        private List<SlideChartDataPoint> _dataSeries = new List<SlideChartDataPoint>();
+        //private List<SlideChartDataPoint> _visibleDataSeries = new List<SlideChartDataPoint>();
+        private List<SlideChartDataPoint> _archiveDataSeries = new List<SlideChartDataPoint>();
 
         private int _dataValueDisplayWidth = 8;
 
-        private int _maxDataItems = 100;
+        private int _maxItemsDisplayed;
+        private int _maxItemsInMemory;
 
         public SlideChartViewModel(SettingsCollection settingsSource)
         {
@@ -41,10 +43,8 @@ namespace HeartRateHistory.ViewModels
 
             VisibleDataSeries = new ObservableCollection<SlideChartDataPoint>();
 
-#if DEBUG
             //////AppendData(new SlideChartDataPoint(DateTime.Now.AddSeconds(-4), 77));
             //////AppendData(new SlideChartDataPoint(DateTime.Now, 78));
-#endif
         }
 
         /// <summary>
@@ -210,17 +210,31 @@ namespace HeartRateHistory.ViewModels
             }
         }
 
-        public int MaxDataItems
+        public int MaxItemsDisplayed
         {
             get
             {
-                return _maxDataItems;
+                return _maxItemsDisplayed;
             }
 
             set
             {
-                _maxDataItems = value;
-                OnPropertyChanged(nameof(MaxDataItems));
+                _maxItemsDisplayed = value;
+                OnPropertyChanged(nameof(MaxItemsDisplayed));
+            }
+        }
+
+        public int MaxItemsInMemory
+        {
+            get
+            {
+                return _maxItemsInMemory;
+            }
+
+            set
+            {
+                _maxItemsInMemory = value;
+                OnPropertyChanged(nameof(MaxItemsInMemory));
             }
         }
 
@@ -236,16 +250,16 @@ namespace HeartRateHistory.ViewModels
         {
             lock (_dataLock)
             {
-                while (_dataSeries.Count + 1 > _maxDataItems)
+                while (_archiveDataSeries.Count + 1 > _maxItemsInMemory)
                 {
-                    _dataSeries.RemoveAt(0);
+                    _archiveDataSeries.RemoveAt(0);
                 }
 
-                _dataSeries.Add(data);
+                _archiveDataSeries.Add(data);
 
                 System.Windows.Application.Current.Dispatcher.Invoke(() =>
                 {
-                    while (VisibleDataSeries.Count + 1 > _maxDataItems)
+                    while (VisibleDataSeries.Count + 1 > _maxItemsDisplayed)
                     {
                         VisibleDataSeries.RemoveAt(0);
                     }
@@ -261,7 +275,7 @@ namespace HeartRateHistory.ViewModels
         {
             lock (_dataLock)
             {
-                _dataSeries.Clear();
+                _archiveDataSeries.Clear();
             }
 
             System.Windows.Application.Current.Dispatcher.Invoke(() =>
@@ -273,26 +287,15 @@ namespace HeartRateHistory.ViewModels
         public void NotifyReloadConfig()
         {
             ReadConfig();
-        }
 
-        public void RemoveOlderThan(int ageInSeconds)
-        {
-            var now = DateTime.Now;
-
-            lock (_dataLock)
+            if (MaxItemsInMemory > _archiveDataSeries.Count)
             {
-                _dataSeries.RemoveAll(x => now.Subtract(x.CaptureTime).TotalSeconds > ageInSeconds);
+                TruncateArchive();
+            }
 
-                System.Windows.Application.Current.Dispatcher.Invoke(() =>
-                {
-                    for (int i = VisibleDataSeries.Count; i >= 0; i--)
-                    {
-                        if (now.Subtract(VisibleDataSeries[i].CaptureTime).TotalSeconds > ageInSeconds)
-                        {
-                            VisibleDataSeries.RemoveAt(i);
-                        }
-                    }
-                });
+            if (MaxItemsDisplayed > VisibleDataSeries.Count)
+            {
+                VisibleReloadFromData();
             }
         }
 
@@ -304,9 +307,12 @@ namespace HeartRateHistory.ViewModels
 
                 System.Windows.Application.Current.Dispatcher.Invoke(() =>
                 {
-                    foreach (var x in _dataSeries)
+                    int startIndex = Math.Max(0, _archiveDataSeries.Count - _maxItemsDisplayed);
+                    int endIndex = _archiveDataSeries.Count;
+
+                    for (int i = startIndex; i < endIndex; i++)
                     {
-                        VisibleDataSeries.Add(x);
+                        VisibleDataSeries.Add(_archiveDataSeries[i]);
                     }
                 });
             }
@@ -318,15 +324,24 @@ namespace HeartRateHistory.ViewModels
             {
                 lock (_dataLock)
                 {
-                    var firstDate = _dataSeries.Min(x => x.CaptureTime);
-                    var lastDate = _dataSeries.Max(x => x.CaptureTime);
+                    var firstDate = _archiveDataSeries.Min(x => x.CaptureTime);
+                    var lastDate = _archiveDataSeries.Max(x => x.CaptureTime);
 
-                    var firstline = $"#{firstDate.ToString(DateTimeFormat)} - {lastDate.ToString(DateTimeFormat)}, {_dataSeries.Count()} values.";
+                    var firstline = $"#{firstDate.ToString(DateTimeFormat)} - {lastDate.ToString(DateTimeFormat)}, {_archiveDataSeries.Count()} values.";
 
                     sw.WriteLine(firstline);
-                    sw.WriteLine(
-                        string.Join(",", _dataSeries.OrderBy(x => x.CaptureTime).Select(x => x.Value))
-                        );
+                    sw.WriteLine(string.Join(",", _archiveDataSeries.OrderBy(x => x.CaptureTime).Select(x => x.Value)));
+                }
+            }
+        }
+
+        private void TruncateArchive()
+        {
+            lock (_dataLock)
+            {
+                while (_archiveDataSeries.Count > _maxItemsInMemory)
+                {
+                    _archiveDataSeries.RemoveAt(0);
                 }
             }
         }
@@ -338,6 +353,8 @@ namespace HeartRateHistory.ViewModels
             BackgroundColorString = settingSource.Items.First(x => x.Key == SharedConfig.SlideChartBackgroundColorKey).CurrentValue;
             BackgroundDataLineColorString = settingSource.Items.First(x => x.Key == SharedConfig.SlideChartDataLineColorKey).CurrentValue;
             BackgroundDataLineLabelColorString = settingSource.Items.First(x => x.Key == SharedConfig.SlideChartDataLineLabelColorKey).CurrentValue;
+            MaxItemsDisplayed = int.Parse(settingSource.Items.First(x => x.Key == SharedConfig.MaxItemsDisplayedKey).CurrentValue);
+            MaxItemsInMemory = int.Parse(settingSource.Items.First(x => x.Key == SharedConfig.MaxItemsInMemoryKey).CurrentValue);
         }
 
         private void ReadConfig()

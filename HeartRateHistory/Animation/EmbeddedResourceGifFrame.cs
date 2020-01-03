@@ -11,14 +11,6 @@ namespace HeartRateHistory.Animation
 {
     public class EmbeddedResourceGifFrame : IDisposable
     {
-        public int CurrentFrame { get; set; }
-
-        public BitmapImage Image { get; set; }
-
-        public int FrameWidth { get; set; }
-
-        public int FrameHeight { get; set; }
-
         public EmbeddedResourceGifFrame(int currentFrame, System.Drawing.Image imageSource)
         {
             if (currentFrame < 0)
@@ -51,6 +43,14 @@ namespace HeartRateHistory.Animation
 
             Image = bm;
         }
+
+        public int CurrentFrame { get; set; }
+
+        public int FrameHeight { get; set; }
+
+        public int FrameWidth { get; set; }
+
+        public BitmapImage Image { get; set; }
 
         public void Dispose()
         {

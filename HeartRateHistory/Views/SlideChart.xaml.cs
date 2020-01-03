@@ -48,7 +48,7 @@ namespace HeartRateHistory.Views
             if (object.ReferenceEquals(null, _rescaleTimeoutTimer))
             {
                 _rescaleTimeoutTimer = new Timer();
-                _rescaleTimeoutTimer.Interval = 1000;
+                _rescaleTimeoutTimer.Interval = 400;
                 _rescaleTimeoutTimer.AutoReset = false;
                 _rescaleTimeoutTimer.Elapsed += (s, e) => VisibleReloadFromData();
             }
