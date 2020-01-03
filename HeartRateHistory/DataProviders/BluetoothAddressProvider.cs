@@ -15,16 +15,11 @@ namespace HeartRateHistory.DefaultConfigDataProviders
     /// </summary>
     public class BluetoothAddressProvider : IConfigDataProviderPoll, IDisposable
     {
-        private HashSet<ulong> _seenDeviceAddressess = new HashSet<ulong>();
-
         private List<BluetoothDeviceInfo> _bluetoothDevices = new List<BluetoothDeviceInfo>();
-
-        private BluetoothLEAdvertisementWatcher _watcher;
         private bool _currentlyScanning = false;
         private Timer _scanTimer;
-
-        /// <inheritdoc />
-        public ObservableCollection<ConfigSettingItem> DataItems { get; set; }
+        private HashSet<ulong> _seenDeviceAddressess = new HashSet<ulong>();
+        private BluetoothLEAdvertisementWatcher _watcher;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="BluetoothAddressProvider"/> class.
@@ -52,45 +47,8 @@ namespace HeartRateHistory.DefaultConfigDataProviders
             _watcher.SignalStrengthFilter.SamplingInterval = TimeSpan.FromMilliseconds(1000);
         }
 
-        /// <summary>
-        /// Event handler when a new advertisement is received.
-        /// </summary>
-        /// <param name="watcher">Watcher.</param>
-        /// <param name="eventArgs">Args.</param>
-        private void OnAdvertisementReceived(BluetoothLEAdvertisementWatcher watcher, BluetoothLEAdvertisementReceivedEventArgs eventArgs)
-        {
-            if (_seenDeviceAddressess.Contains(eventArgs.BluetoothAddress))
-            {
-                return;
-            }
-
-            if (!string.IsNullOrEmpty(eventArgs.Advertisement.LocalName))
-            {
-                var info = new BluetoothDeviceInfo()
-                {
-                    Address = eventArgs.BluetoothAddress,
-                    LocalName = eventArgs.Advertisement.LocalName,
-                    ServiceUuids = new List<Guid>(eventArgs.Advertisement.ServiceUuids), // probably empty
-                };
-
-                _bluetoothDevices.Add(info);
-                _seenDeviceAddressess.Add(eventArgs.BluetoothAddress);
-
-                DataItems.Add(new ConfigSettingItem()
-                {
-                    Data = info,
-                    Key = info.Address.ToString(),
-                    Display = info.LocalName,
-                });
-            }
-
-            // Tell the user we see an advertisement and print some properties
-            System.Diagnostics.Debug.WriteLine(String.Format($"Advertisement: ({eventArgs.AdvertisementType.ToString()})"));
-            System.Diagnostics.Debug.WriteLine(String.Format("  BT_ADDR: {0}", eventArgs.BluetoothAddress));
-            System.Diagnostics.Debug.WriteLine(String.Format("  FR_NAME: {0}", eventArgs.Advertisement.LocalName));
-            System.Diagnostics.Debug.WriteLine(String.Format("  ServiceUuids: {0}", String.Join(",", eventArgs.Advertisement.ServiceUuids.Select(x => x.ToString()))));
-            System.Diagnostics.Debug.WriteLine(string.Empty);
-        }
+        /// <inheritdoc />
+        public ObservableCollection<ConfigSettingItem> DataItems { get; set; }
 
         /// <inheritdoc />
         public void Dispose()
@@ -134,6 +92,46 @@ namespace HeartRateHistory.DefaultConfigDataProviders
             _watcher.Stop();
             _scanTimer.Stop();
             _currentlyScanning = false;
+        }
+
+        /// <summary>
+        /// Event handler when a new advertisement is received.
+        /// </summary>
+        /// <param name="watcher">Watcher.</param>
+        /// <param name="eventArgs">Args.</param>
+        private void OnAdvertisementReceived(BluetoothLEAdvertisementWatcher watcher, BluetoothLEAdvertisementReceivedEventArgs eventArgs)
+        {
+            if (_seenDeviceAddressess.Contains(eventArgs.BluetoothAddress))
+            {
+                return;
+            }
+
+            if (!string.IsNullOrEmpty(eventArgs.Advertisement.LocalName))
+            {
+                var info = new BluetoothDeviceInfo()
+                {
+                    Address = eventArgs.BluetoothAddress,
+                    LocalName = eventArgs.Advertisement.LocalName,
+                    ServiceUuids = new List<Guid>(eventArgs.Advertisement.ServiceUuids), // probably empty
+                };
+
+                _bluetoothDevices.Add(info);
+                _seenDeviceAddressess.Add(eventArgs.BluetoothAddress);
+
+                DataItems.Add(new ConfigSettingItem()
+                {
+                    Data = info,
+                    Key = info.Address.ToString(),
+                    Display = info.LocalName,
+                });
+            }
+
+            // Tell the user we see an advertisement and print some properties
+            System.Diagnostics.Debug.WriteLine(String.Format($"Advertisement: ({eventArgs.AdvertisementType.ToString()})"));
+            System.Diagnostics.Debug.WriteLine(String.Format("  BT_ADDR: {0}", eventArgs.BluetoothAddress));
+            System.Diagnostics.Debug.WriteLine(String.Format("  FR_NAME: {0}", eventArgs.Advertisement.LocalName));
+            System.Diagnostics.Debug.WriteLine(String.Format("  ServiceUuids: {0}", String.Join(",", eventArgs.Advertisement.ServiceUuids.Select(x => x.ToString()))));
+            System.Diagnostics.Debug.WriteLine(string.Empty);
         }
     }
 }

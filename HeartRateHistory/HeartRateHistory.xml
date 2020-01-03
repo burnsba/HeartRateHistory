@@ -118,20 +118,13 @@
             Scans for connected bluetooth devices.
             </summary>
         </member>
-        <member name="P:HeartRateHistory.DefaultConfigDataProviders.BluetoothAddressProvider.DataItems">
-            <inheritdoc />
-        </member>
         <member name="M:HeartRateHistory.DefaultConfigDataProviders.BluetoothAddressProvider.#ctor">
             <summary>
             Initializes a new instance of the <see cref="T:HeartRateHistory.DefaultConfigDataProviders.BluetoothAddressProvider"/> class.
             </summary>
         </member>
-        <member name="M:HeartRateHistory.DefaultConfigDataProviders.BluetoothAddressProvider.OnAdvertisementReceived(Windows.Devices.Bluetooth.Advertisement.BluetoothLEAdvertisementWatcher,Windows.Devices.Bluetooth.Advertisement.BluetoothLEAdvertisementReceivedEventArgs)">
-            <summary>
-            Event handler when a new advertisement is received.
-            </summary>
-            <param name="watcher">Watcher.</param>
-            <param name="eventArgs">Args.</param>
+        <member name="P:HeartRateHistory.DefaultConfigDataProviders.BluetoothAddressProvider.DataItems">
+            <inheritdoc />
         </member>
         <member name="M:HeartRateHistory.DefaultConfigDataProviders.BluetoothAddressProvider.Dispose">
             <inheritdoc />
@@ -146,12 +139,19 @@
             Stops scanning for bluetooth devices.
             </summary>
         </member>
-        <member name="T:HeartRateHistory.DataTemplateSelectors.SkinConfigSettingTemplateSelector">
+        <member name="M:HeartRateHistory.DefaultConfigDataProviders.BluetoothAddressProvider.OnAdvertisementReceived(Windows.Devices.Bluetooth.Advertisement.BluetoothLEAdvertisementWatcher,Windows.Devices.Bluetooth.Advertisement.BluetoothLEAdvertisementReceivedEventArgs)">
+            <summary>
+            Event handler when a new advertisement is received.
+            </summary>
+            <param name="watcher">Watcher.</param>
+            <param name="eventArgs">Args.</param>
+        </member>
+        <member name="T:HeartRateHistory.DataTemplateSelectors.ConfigSettingTemplateSelector">
             <summary>
             Xaml data template selector for skin config items.
             </summary>
         </member>
-        <member name="M:HeartRateHistory.DataTemplateSelectors.SkinConfigSettingTemplateSelector.SelectTemplate(System.Object,System.Windows.DependencyObject)">
+        <member name="M:HeartRateHistory.DataTemplateSelectors.ConfigSettingTemplateSelector.SelectTemplate(System.Object,System.Windows.DependencyObject)">
             <summary>
             Resolves object based on InputType property.
             </summary>
@@ -675,52 +675,21 @@
             <param name="header">Header message text.</param>
             <param name="ex">Exception to display information about.</param>
         </member>
+        <member name="M:HeartRateHistory.ViewModels.MainViewModel.InputEventMapper(System.Object,BurnsBac.WindowsHardware.Bluetooth.Characteristics.HeartRateMeasurement)">
+            <summary>
+            Accepts <see cref="T:BurnsBac.WindowsHardware.Bluetooth.Characteristics.HeartRateMeasurement"/>.
+            </summary>
+            <param name="sender">Sender.</param>
+            <param name="state">Event args.</param>
+        </member>
         <member name="M:HeartRateHistory.ViewModels.MainViewModel.ReadConfig">
             <summary>
             Reads app.config and sets global settings.
             </summary>
         </member>
-        <member name="M:HeartRateHistory.ViewModels.MainViewModel.InputEventMapper(System.Object,BurnsBac.WindowsHardware.Bluetooth.Characteristics.HeartRateMeasurement)">
-            <summary>
-            Accepts <see cref="T:BurnsBac.WindowsHardware.Bluetooth.Characteristics.HeartRateMeasurement"/> and translates to <see cref="!:GenericInputEventArgs"/>.
-            </summary>
-            <param name="sender">Sender.</param>
-            <param name="state">Event args.</param>
-        </member>
         <member name="T:HeartRateHistory.ViewModels.SkinConfigSettingDropdownViewModel">
             <summary>
             View model for skin config dropdown setting.
-            </summary>
-        </member>
-        <member name="E:HeartRateHistory.ViewModels.SkinConfigSettingDropdownViewModel.PropertyChanged">
-            <summary>
-            Property changed event.
-            </summary>
-        </member>
-        <member name="M:HeartRateHistory.ViewModels.SkinConfigSettingDropdownViewModel.OnPropertyChanged(System.String)">
-            <summary>
-            Property changed notifier.
-            </summary>
-            <param name="property">Name of property that changed.</param>
-        </member>
-        <member name="P:HeartRateHistory.ViewModels.SkinConfigSettingDropdownViewModel.Items">
-            <summary>
-            Gets or sets list of dropdown data items.
-            </summary>
-        </member>
-        <member name="P:HeartRateHistory.ViewModels.SkinConfigSettingDropdownViewModel.WaitingForFirstPollResult">
-            <summary>
-            Gets or sets a flag indicating whether any poll results have been received yet.
-            </summary>
-        </member>
-        <member name="P:HeartRateHistory.ViewModels.SkinConfigSettingDropdownViewModel.ShowScanningInfo">
-            <summary>
-            Gets a flag indicating whether the UI should notify the user the application is waiting for results.
-            </summary>
-        </member>
-        <member name="P:HeartRateHistory.ViewModels.SkinConfigSettingDropdownViewModel.SelectedItem">
-            <summary>
-            Gets or sets currently selected data item.
             </summary>
         </member>
         <member name="M:HeartRateHistory.ViewModels.SkinConfigSettingDropdownViewModel.#ctor(HeartRateHistory.HotConfig.Setting)">
@@ -729,8 +698,39 @@
             </summary>
             <param name="item">Source item.</param>
         </member>
+        <member name="E:HeartRateHistory.ViewModels.SkinConfigSettingDropdownViewModel.PropertyChanged">
+            <summary>
+            Property changed event.
+            </summary>
+        </member>
+        <member name="P:HeartRateHistory.ViewModels.SkinConfigSettingDropdownViewModel.Items">
+            <summary>
+            Gets or sets list of dropdown data items.
+            </summary>
+        </member>
+        <member name="P:HeartRateHistory.ViewModels.SkinConfigSettingDropdownViewModel.SelectedItem">
+            <summary>
+            Gets or sets currently selected data item.
+            </summary>
+        </member>
+        <member name="P:HeartRateHistory.ViewModels.SkinConfigSettingDropdownViewModel.ShowScanningInfo">
+            <summary>
+            Gets a value indicating whether the UI should notify the user the application is waiting for results.
+            </summary>
+        </member>
+        <member name="P:HeartRateHistory.ViewModels.SkinConfigSettingDropdownViewModel.WaitingForFirstPollResult">
+            <summary>
+            Gets or sets a value indicating whether any poll results have been received yet.
+            </summary>
+        </member>
         <member name="M:HeartRateHistory.ViewModels.SkinConfigSettingDropdownViewModel.Dispose">
             <inheritdoc />
+        </member>
+        <member name="M:HeartRateHistory.ViewModels.SkinConfigSettingDropdownViewModel.OnPropertyChanged(System.String)">
+            <summary>
+            Property changed notifier.
+            </summary>
+            <param name="property">Name of property that changed.</param>
         </member>
         <member name="T:HeartRateHistory.ViewModels.SkinConfigSettingTextboxViewModel">
             <summary>
@@ -746,19 +746,14 @@
         <member name="M:HeartRateHistory.ViewModels.SkinConfigSettingTextboxViewModel.Dispose">
             <inheritdoc />
         </member>
-        <member name="P:HeartRateHistory.ViewModels.SlideChartViewModel.BackgroundColorString">
-            <summary>
-            Gets or sets the main window background color, as a hex code string.
-            </summary>
-        </member>
         <member name="P:HeartRateHistory.ViewModels.SlideChartViewModel.BackgroundColor">
             <summary>
             Gets or sets the main window background color.
             </summary>
         </member>
-        <member name="P:HeartRateHistory.ViewModels.SlideChartViewModel.BackgroundDataLineColorString">
+        <member name="P:HeartRateHistory.ViewModels.SlideChartViewModel.BackgroundColorString">
             <summary>
-            Gets or sets the chart area interval line color, as a hex code string.
+            Gets or sets the main window background color, as a hex code string.
             </summary>
         </member>
         <member name="P:HeartRateHistory.ViewModels.SlideChartViewModel.BackgroundDataLineColor">
@@ -766,14 +761,19 @@
             Gets or sets the chart area interval line color.
             </summary>
         </member>
-        <member name="P:HeartRateHistory.ViewModels.SlideChartViewModel.BackgroundDataLineLabelColorString">
+        <member name="P:HeartRateHistory.ViewModels.SlideChartViewModel.BackgroundDataLineColorString">
             <summary>
-            Gets or sets the chart area data interval label color, as a hex code string.
+            Gets or sets the chart area interval line color, as a hex code string.
             </summary>
         </member>
         <member name="P:HeartRateHistory.ViewModels.SlideChartViewModel.BackgroundDataLineLabelColor">
             <summary>
             Gets or sets the chart area interval line color.
+            </summary>
+        </member>
+        <member name="P:HeartRateHistory.ViewModels.SlideChartViewModel.BackgroundDataLineLabelColorString">
+            <summary>
+            Gets or sets the chart area data interval label color, as a hex code string.
             </summary>
         </member>
         <member name="T:HeartRateHistory.Views.SlideChart">
@@ -785,19 +785,6 @@
             </summary>
         </member>
         <member name="M:HeartRateHistory.Views.SlideChart.InitializeComponent">
-            <summary>
-            InitializeComponent
-            </summary>
-        </member>
-        <member name="T:HeartRateHistory.Views.SlideChart_1">
-            <summary>
-            Interaction logic for SlideChart.xaml .
-            </summary>
-            <summary>
-            SlideChart_1
-            </summary>
-        </member>
-        <member name="M:HeartRateHistory.Views.SlideChart_1.InitializeComponent">
             <summary>
             InitializeComponent
             </summary>
@@ -842,7 +829,7 @@
         </member>
         <member name="T:HeartRateHistory.Windows.MainWindow">
             <summary>
-            Interaction logic for MainWindow.xaml
+            Interaction logic for MainWindow.xaml .
             </summary>
             <summary>
             MainWindow

@@ -11,7 +11,7 @@ namespace HeartRateHistory.DataTemplateSelectors
     /// <summary>
     /// Xaml data template selector for skin config items.
     /// </summary>
-    public class SkinConfigSettingTemplateSelector : DataTemplateSelector
+    public class ConfigSettingTemplateSelector : DataTemplateSelector
     {
         /// <summary>
         /// Resolves object based on InputType property.

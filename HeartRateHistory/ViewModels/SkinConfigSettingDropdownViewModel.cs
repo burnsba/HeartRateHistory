@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using HeartRateHistory.Dto;
 using HeartRateHistory.HotConfig;
 using HeartRateHistory.HotConfig.DataSource;
-using HeartRateHistory.Dto;
 
 namespace HeartRateHistory.ViewModels
 {
@@ -14,68 +14,9 @@ namespace HeartRateHistory.ViewModels
     /// </summary>
     public class SkinConfigSettingDropdownViewModel : ConfigSettingBase, INotifyPropertyChanged
     {
-        private DropdownItem _selectedItem;
-        IConfigDataProvider _dataProvider = null;
+        private IConfigDataProvider _dataProvider = null;
         private bool _isPoll = false;
-
-        /// <summary>
-        /// Property changed event.
-        /// </summary>
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        /// <summary>
-        /// Property changed notifier.
-        /// </summary>
-        /// <param name="property">Name of property that changed.</param>
-        protected void OnPropertyChanged(string property)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
-        }
-
-        /// <summary>
-        /// Gets or sets list of dropdown data items.
-        /// </summary>
-        public List<DropdownItem> Items { get; set; }
-
-        /// <summary>
-        /// Gets or sets a flag indicating whether any poll results have been received yet.
-        /// </summary>
-        public bool WaitingForFirstPollResult { get; set; } = false;
-
-        /// <summary>
-        /// Gets a flag indicating whether the UI should notify the user the application is waiting for results.
-        /// </summary>
-        public bool ShowScanningInfo
-        {
-            get
-            {
-                return WaitingForFirstPollResult == true && _isPoll == true;
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets currently selected data item.
-        /// </summary>
-        public DropdownItem SelectedItem
-        {
-            get
-            {
-                return _selectedItem;
-            }
-
-            set
-            {
-                _selectedItem = value;
-                if (!object.ReferenceEquals(null, _selectedItem))
-                {
-                    _settingsItem.CurrentValue = _selectedItem.Id;
-                }
-                else
-                {
-                    _settingsItem.CurrentValue = string.Empty;
-                }
-            }
-        }
+        private DropdownItem _selectedItem;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SkinConfigSettingDropdownViewModel"/> class.
@@ -121,6 +62,84 @@ namespace HeartRateHistory.ViewModels
             SelectedItem = Items.Where(x => x.Id == CurrentValue).FirstOrDefault();
         }
 
+        /// <summary>
+        /// Property changed event.
+        /// </summary>
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        /// <summary>
+        /// Gets or sets list of dropdown data items.
+        /// </summary>
+        public List<DropdownItem> Items { get; set; }
+
+        /// <summary>
+        /// Gets or sets currently selected data item.
+        /// </summary>
+        public DropdownItem SelectedItem
+        {
+            get
+            {
+                return _selectedItem;
+            }
+
+            set
+            {
+                _selectedItem = value;
+                if (!object.ReferenceEquals(null, _selectedItem))
+                {
+                    _settingsItem.CurrentValue = _selectedItem.Id;
+                }
+                else
+                {
+                    _settingsItem.CurrentValue = string.Empty;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether the UI should notify the user the application is waiting for results.
+        /// </summary>
+        public bool ShowScanningInfo
+        {
+            get
+            {
+                return WaitingForFirstPollResult == true && _isPoll == true;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether any poll results have been received yet.
+        /// </summary>
+        public bool WaitingForFirstPollResult { get; set; } = false;
+
+        /// <inheritdoc />
+        public override void Dispose()
+        {
+            if (object.ReferenceEquals(null, _dataProvider))
+            {
+                return;
+            }
+
+            var dataProviderType = _dataProvider.GetType();
+
+            if (typeof(IConfigDataProviderPoll).IsAssignableFrom(dataProviderType))
+            {
+                var pollProvider = (IConfigDataProviderPoll)_dataProvider;
+
+                pollProvider.Stop();
+                pollProvider.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Property changed notifier.
+        /// </summary>
+        /// <param name="property">Name of property that changed.</param>
+        protected void OnPropertyChanged(string property)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
+        }
+
         private void DataProviderPollCollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             bool notify = false;
@@ -156,25 +175,6 @@ namespace HeartRateHistory.ViewModels
                 OnPropertyChanged(nameof(Items));
                 OnPropertyChanged(nameof(WaitingForFirstPollResult));
                 OnPropertyChanged(nameof(ShowScanningInfo));
-            }
-        }
-
-        /// <inheritdoc />
-        public override void Dispose()
-        {
-            if (object.ReferenceEquals(null, _dataProvider))
-            {
-                return;
-            }
-
-            var dataProviderType = _dataProvider.GetType();
-
-            if (typeof(IConfigDataProviderPoll).IsAssignableFrom(dataProviderType))
-            {
-                var pollProvider = (IConfigDataProviderPoll)_dataProvider;
-
-                pollProvider.Stop();
-                pollProvider.Dispose();
             }
         }
     }

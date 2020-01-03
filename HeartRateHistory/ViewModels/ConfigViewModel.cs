@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Windows.Input;
-using HeartRateHistory.HotConfig;
-using HeartRateHistory.Dto;
 using BurnsBac.Mvvm;
+using HeartRateHistory.HotConfig;
 using HeartRateHistory.Windows;
 
 namespace HeartRateHistory.ViewModels

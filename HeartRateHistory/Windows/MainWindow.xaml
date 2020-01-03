@@ -41,7 +41,7 @@
             <Button Grid.Column="1" Margin="6" Padding="12,8,12,8" Command="{Binding Path=PauseResumeCommand}" Content="{Binding Path=PauseResumeText}"></Button>
             <Button Grid.Column="2" Margin="6" Padding="12,8,12,8" Command="{Binding Path=ResetCommand}">Reset Chart</Button>
             <Button Grid.Column="3" Margin="6" Padding="12,8,12,8" Command="{Binding Path=ConnectDisconnectCommand}" Content="{Binding Path=ConnectDisconnectText}"></Button>
-            <Button Grid.Column="4" Margin="6" Padding="12,8,12,8" Command="{Binding Path=ReconnectCommand}">Reconnect</Button>
+            <Button Grid.Column="4" Margin="6" Padding="12,8,12,8" Command="{Binding Path=ReconnectCommand}" Visibility="Hidden">Reconnect</Button>
             <TextBlock Grid.Column="5">Time since last value:</TextBlock>
             <TextBlock Grid.Column="6" Padding="12,0,0,0" Text="{Binding Path=TimeSinceLastUpdate}"></TextBlock>
         </Grid>
@@ -66,15 +66,8 @@
                 </Grid.RowDefinitions>
 
                 <StackPanel Orientation="Horizontal" Grid.Row="0">
-                    <Image x:Name="ImageHeart" Width="64" Height="64"
-                            gif:ImageBehavior.AutoStart="False"
-                            gif:ImageBehavior.RepeatBehavior="Forever"
-                            gif:ImageBehavior.AnimatedSource="pack://application:,,,/HeartRateHistory;component/img/heart.gif"
-                            ></Image>
-                    <Image x:Name="ImageDataXfer" Width="64" Height="64"
-                            gif:ImageBehavior.AutoStart="False"
-                            gif:ImageBehavior.AnimatedSource="pack://application:,,,/HeartRateHistory;component/img/dataxfer_reverse3.gif"
-                            ></Image>
+                    <Image x:Name="ImageHeart" Width="64" Height="64"></Image>
+                    <Image x:Name="ImageDataXfer" Width="64" Height="64"></Image>
                 </StackPanel>
 
                 <TextBlock

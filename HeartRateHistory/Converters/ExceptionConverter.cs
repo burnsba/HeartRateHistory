@@ -41,7 +41,8 @@ namespace HeartRateHistory.Converters
 
                 currentEx = currentEx.InnerException;
                 currentDepth += ".InnerException";
-            } while (currentEx != null);
+            }
+            while (currentEx != null);
 
             return sb.ToString();
         }

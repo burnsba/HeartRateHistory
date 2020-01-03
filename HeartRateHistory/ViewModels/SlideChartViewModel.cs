@@ -2,18 +2,8 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using BurnsBac.Mvvm;
-using HeartRateHistory.Converters;
 using HeartRateHistory.HotConfig;
 using HeartRateHistory.Models;
 
@@ -23,20 +13,27 @@ namespace HeartRateHistory.ViewModels
     {
         public const int InitialSeriesPanelHeight = 220;
 
-        private List<SlideChartDataPoint> _dataSeries = new List<SlideChartDataPoint>();
-        private object _dataLock = new object();
-        private int _maxDataItems = 100;
-        private int _dataValueDisplayWidth = 8;
-        private double _containerDisplayHeight = InitialSeriesPanelHeight;
-
         private SolidColorBrush _backgroundColor = new SolidColorBrush(Color.FromRgb(byte.MaxValue, byte.MaxValue, byte.MaxValue));
+
         private string _backgroundColorString = null;
 
         private SolidColorBrush _backgroundDataLineColor = new SolidColorBrush(Color.FromRgb(byte.MaxValue, byte.MaxValue, byte.MaxValue));
+
         private string _backgroundDataLineColorString = null;
 
         private SolidColorBrush _backgroundDataLineLabelColor = new SolidColorBrush(Color.FromRgb(byte.MaxValue, byte.MaxValue, byte.MaxValue));
+
         private string _backgroundDataLineLabelColorString = null;
+
+        private double _containerDisplayHeight = InitialSeriesPanelHeight;
+
+        private object _dataLock = new object();
+
+        private List<SlideChartDataPoint> _dataSeries = new List<SlideChartDataPoint>();
+
+        private int _dataValueDisplayWidth = 8;
+
+        private int _maxDataItems = 100;
 
         public SlideChartViewModel(SettingsCollection settingsSource)
         {
@@ -44,17 +41,30 @@ namespace HeartRateHistory.ViewModels
 
             VisibleDataSeries = new ObservableCollection<SlideChartDataPoint>();
 
-            AppendData(new SlideChartDataPoint(DateTime.Now.AddSeconds(-4), 77));
-            AppendData(new SlideChartDataPoint(DateTime.Now, 78));
+#if DEBUG
+            //////AppendData(new SlideChartDataPoint(DateTime.Now.AddSeconds(-4), 77));
+            //////AppendData(new SlideChartDataPoint(DateTime.Now, 78));
+#endif
         }
 
-        public ObservableCollection<SlideChartDataPoint> VisibleDataSeries
+        /// <summary>
+        /// Gets or sets the main window background color.
+        /// </summary>
+        public SolidColorBrush BackgroundColor
         {
-            get;
-            set;
-        }
+            get
+            {
+                return _backgroundColor;
+            }
 
-        private string DateTimeFormat { get; set; } = "yyyyMMdd-HHmmss";
+            set
+            {
+                _backgroundColor = value;
+                _backgroundColorString = $"#{value.Color.R.ToString("X2")}{value.Color.G.ToString("X2")}{value.Color.B.ToString("X2")}";
+                OnPropertyChanged(nameof(BackgroundColor));
+                OnPropertyChanged(nameof(BackgroundColorString));
+            }
+        }
 
         /// <summary>
         /// Gets or sets the main window background color, as a hex code string.
@@ -83,21 +93,21 @@ namespace HeartRateHistory.ViewModels
         }
 
         /// <summary>
-        /// Gets or sets the main window background color.
+        /// Gets or sets the chart area interval line color.
         /// </summary>
-        public SolidColorBrush BackgroundColor
+        public SolidColorBrush BackgroundDataLineColor
         {
             get
             {
-                return _backgroundColor;
+                return _backgroundDataLineColor;
             }
 
             set
             {
-                _backgroundColor = value;
-                _backgroundColorString = $"#{value.Color.R.ToString("X2")}{value.Color.G.ToString("X2")}{value.Color.B.ToString("X2")}";
-                OnPropertyChanged(nameof(BackgroundColor));
-                OnPropertyChanged(nameof(BackgroundColorString));
+                _backgroundDataLineColor = value;
+                _backgroundDataLineColorString = $"#{value.Color.R.ToString("X2")}{value.Color.G.ToString("X2")}{value.Color.B.ToString("X2")}";
+                OnPropertyChanged(nameof(BackgroundDataLineColor));
+                OnPropertyChanged(nameof(BackgroundDataLineColorString));
             }
         }
 
@@ -130,19 +140,19 @@ namespace HeartRateHistory.ViewModels
         /// <summary>
         /// Gets or sets the chart area interval line color.
         /// </summary>
-        public SolidColorBrush BackgroundDataLineColor
+        public SolidColorBrush BackgroundDataLineLabelColor
         {
             get
             {
-                return _backgroundDataLineColor;
+                return _backgroundDataLineLabelColor;
             }
 
             set
             {
-                _backgroundDataLineColor = value;
-                _backgroundDataLineColorString = $"#{value.Color.R.ToString("X2")}{value.Color.G.ToString("X2")}{value.Color.B.ToString("X2")}";
-                OnPropertyChanged(nameof(BackgroundDataLineColor));
-                OnPropertyChanged(nameof(BackgroundDataLineColorString));
+                _backgroundDataLineLabelColor = value;
+                _backgroundDataLineLabelColorString = $"#{value.Color.R.ToString("X2")}{value.Color.G.ToString("X2")}{value.Color.B.ToString("X2")}";
+                OnPropertyChanged(nameof(BackgroundDataLineLabelColor));
+                OnPropertyChanged(nameof(BackgroundDataLineLabelColorString));
             }
         }
 
@@ -172,22 +182,17 @@ namespace HeartRateHistory.ViewModels
             }
         }
 
-        /// <summary>
-        /// Gets or sets the chart area interval line color.
-        /// </summary>
-        public SolidColorBrush BackgroundDataLineLabelColor
+        public double ContainerDisplayHeight
         {
             get
             {
-                return _backgroundDataLineLabelColor;
+                return _containerDisplayHeight;
             }
 
             set
             {
-                _backgroundDataLineLabelColor = value;
-                _backgroundDataLineLabelColorString = $"#{value.Color.R.ToString("X2")}{value.Color.G.ToString("X2")}{value.Color.B.ToString("X2")}";
-                OnPropertyChanged(nameof(BackgroundDataLineLabelColor));
-                OnPropertyChanged(nameof(BackgroundDataLineLabelColorString));
+                _containerDisplayHeight = value;
+                OnPropertyChanged(nameof(ContainerDisplayHeight));
             }
         }
 
@@ -219,19 +224,13 @@ namespace HeartRateHistory.ViewModels
             }
         }
 
-        public double ContainerDisplayHeight
+        public ObservableCollection<SlideChartDataPoint> VisibleDataSeries
         {
-            get
-            {
-                return _containerDisplayHeight;
-            }
-
-            set
-            {
-                _containerDisplayHeight = value;
-                OnPropertyChanged(nameof(ContainerDisplayHeight));
-            }
+            get;
+            set;
         }
+
+        private string DateTimeFormat { get; set; } = "yyyyMMdd-HHmmss";
 
         public bool AppendData(SlideChartDataPoint data)
         {
@@ -258,6 +257,24 @@ namespace HeartRateHistory.ViewModels
             return true;
         }
 
+        public void Clear()
+        {
+            lock (_dataLock)
+            {
+                _dataSeries.Clear();
+            }
+
+            System.Windows.Application.Current.Dispatcher.Invoke(() =>
+            {
+                VisibleDataSeries.Clear();
+            });
+        }
+
+        public void NotifyReloadConfig()
+        {
+            ReadConfig();
+        }
+
         public void RemoveOlderThan(int ageInSeconds)
         {
             var now = DateTime.Now;
@@ -274,6 +291,22 @@ namespace HeartRateHistory.ViewModels
                         {
                             VisibleDataSeries.RemoveAt(i);
                         }
+                    }
+                });
+            }
+        }
+
+        public void VisibleReloadFromData()
+        {
+            lock (_dataLock)
+            {
+                VisibleDataSeries.Clear();
+
+                System.Windows.Application.Current.Dispatcher.Invoke(() =>
+                {
+                    foreach (var x in _dataSeries)
+                    {
+                        VisibleDataSeries.Add(x);
                     }
                 });
             }
@@ -298,47 +331,6 @@ namespace HeartRateHistory.ViewModels
             }
         }
 
-        public void Clear()
-        {
-            lock (_dataLock)
-            {
-                _dataSeries.Clear();
-            }
-
-            System.Windows.Application.Current.Dispatcher.Invoke(() =>
-            {
-                VisibleDataSeries.Clear();
-            });
-        }
-
-        public void VisibleReloadFromData()
-        {
-            lock (_dataLock)
-            {
-                VisibleDataSeries.Clear();
-
-                System.Windows.Application.Current.Dispatcher.Invoke(() =>
-                {
-                    foreach (var x in _dataSeries)
-                    {
-                        VisibleDataSeries.Add(x);
-                    }
-                });
-            }
-        }
-
-        public void NotifyReloadConfig()
-        {
-            ReadConfig();
-        }
-
-        private void ReadConfig()
-        {
-            var settingSource = SettingsCollection.FromFile(SharedConfig.SettingsFileName);
-
-            LoadConfig(settingSource);
-        }
-
         private void LoadConfig(SettingsCollection settingSource)
         {
             DateTimeFormat = settingSource.Items.First(x => x.Key == SharedConfig.DateTimeFormatKey).CurrentValue;
@@ -346,6 +338,13 @@ namespace HeartRateHistory.ViewModels
             BackgroundColorString = settingSource.Items.First(x => x.Key == SharedConfig.SlideChartBackgroundColorKey).CurrentValue;
             BackgroundDataLineColorString = settingSource.Items.First(x => x.Key == SharedConfig.SlideChartDataLineColorKey).CurrentValue;
             BackgroundDataLineLabelColorString = settingSource.Items.First(x => x.Key == SharedConfig.SlideChartDataLineLabelColorKey).CurrentValue;
+        }
+
+        private void ReadConfig()
+        {
+            var settingSource = SettingsCollection.FromFile(SharedConfig.SettingsFileName);
+
+            LoadConfig(settingSource);
         }
     }
 }
