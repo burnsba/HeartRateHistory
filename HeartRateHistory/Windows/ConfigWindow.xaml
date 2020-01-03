@@ -8,7 +8,7 @@
         xmlns:c="clr-namespace:BurnsBac.Mvvm.Converters;assembly=BurnsBac.Mvvm"
         mc:Ignorable="d"
         Name="ConfigWindowx"
-        Title="Config" Height="450" Width="800" Closing="SkinConfigWindowx_Closing">
+        Title="Heartrate History: Config" Height="450" Width="800" Closing="SkinConfigWindowx_Closing">
 
     <Window.Resources>
         <dts:ConfigSettingTemplateSelector x:Key="scis"></dts:ConfigSettingTemplateSelector>
