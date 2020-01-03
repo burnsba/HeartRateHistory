@@ -9,6 +9,5 @@ namespace HeartRateHistory.HotConfig.DataSource
     /// </summary>
     public interface IConfigDataProvider
     {
-        
     }
 }

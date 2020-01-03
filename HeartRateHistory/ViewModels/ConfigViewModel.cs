@@ -16,29 +16,9 @@ namespace HeartRateHistory.ViewModels
         private SettingsCollection _settingSource = null;
 
         /// <summary>
-        /// Gets or sets list of settings items.
-        /// </summary>
-        public List<IConfigSetting> SettingItems { get; set; }
-
-        /// <summary>
-        /// Gets or sets skin currently being configured.
-        /// </summary>
-        public string DisplayName { get; set; }
-
-        /// <summary>
-        /// Gets or sets ok button command.
-        /// </summary>
-        public ICommand OkCommand { get; set; }
-
-        /// <summary>
-        /// Gets or sets cancel button command.
-        /// </summary>
-        public ICommand CancelCommand { get; set; }
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="ConfigViewModel"/> class.
         /// </summary>
-        /// <param name="askv">Source info.</param>
+        /// <param name="parent">Parent to notify if config settings change.</param>
         public ConfigViewModel(MainViewModel parent)
         {
             _settingSource = SettingsCollection.FromFile(SharedConfig.SettingsFileName);
@@ -73,10 +53,33 @@ namespace HeartRateHistory.ViewModels
             });
         }
 
+        /// <summary>
+        /// Gets or sets cancel button command.
+        /// </summary>
+        public ICommand CancelCommand { get; set; }
+
+        /// <summary>
+        /// Gets or sets skin currently being configured.
+        /// </summary>
+        public string DisplayName { get; set; }
+
+        /// <summary>
+        /// Gets or sets ok button command.
+        /// </summary>
+        public ICommand OkCommand { get; set; }
+
+        /// <summary>
+        /// Gets or sets list of settings items.
+        /// </summary>
+        public List<IConfigSetting> SettingItems { get; set; }
+
         /// <inheritdoc />
-        public override string ToString()
+        public void Dispose()
         {
-            return DisplayName;
+            foreach (var item in SettingItems)
+            {
+                item.Dispose();
+            }
         }
 
         /// <summary>
@@ -98,12 +101,9 @@ namespace HeartRateHistory.ViewModels
         }
 
         /// <inheritdoc />
-        public void Dispose()
+        public override string ToString()
         {
-            foreach (var item in SettingItems)
-            {
-                item.Dispose();
-            }
+            return DisplayName;
         }
 
         /// <summary>

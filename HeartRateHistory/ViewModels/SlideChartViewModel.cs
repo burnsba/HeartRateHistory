@@ -9,8 +9,14 @@ using HeartRateHistory.Models;
 
 namespace HeartRateHistory.ViewModels
 {
+    /// <summary>
+    /// View model for slide chart control.
+    /// </summary>
     public class SlideChartViewModel : ViewModelBase
     {
+        /// <summary>
+        /// Default height for chart area.
+        /// </summary>
         public const int InitialSeriesPanelHeight = 220;
 
         private SolidColorBrush _backgroundColor = new SolidColorBrush(Color.FromRgb(byte.MaxValue, byte.MaxValue, byte.MaxValue));
@@ -29,7 +35,6 @@ namespace HeartRateHistory.ViewModels
 
         private object _dataLock = new object();
 
-        //private List<SlideChartDataPoint> _visibleDataSeries = new List<SlideChartDataPoint>();
         private List<SlideChartDataPoint> _archiveDataSeries = new List<SlideChartDataPoint>();
 
         private int _dataValueDisplayWidth = 8;
@@ -37,6 +42,10 @@ namespace HeartRateHistory.ViewModels
         private int _maxItemsDisplayed;
         private int _maxItemsInMemory;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SlideChartViewModel"/> class.
+        /// </summary>
+        /// <param name="settingsSource">Settings file data.</param>
         public SlideChartViewModel(SettingsCollection settingsSource)
         {
             LoadConfig(settingsSource);
@@ -182,6 +191,9 @@ namespace HeartRateHistory.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets or sets actual height of chart area.
+        /// </summary>
         public double ContainerDisplayHeight
         {
             get
@@ -196,6 +208,9 @@ namespace HeartRateHistory.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets or sets the width of each individual rectangle in the chart area.
+        /// </summary>
         public int DataValueDisplayWidth
         {
             get
@@ -210,6 +225,9 @@ namespace HeartRateHistory.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets or sets the maximum number of rectangles to be shown in the chart area.
+        /// </summary>
         public int MaxItemsDisplayed
         {
             get
@@ -224,6 +242,9 @@ namespace HeartRateHistory.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets or sets the max number of data points to keep in memory.
+        /// </summary>
         public int MaxItemsInMemory
         {
             get
@@ -238,14 +259,26 @@ namespace HeartRateHistory.ViewModels
             }
         }
 
+        /// <summary>
+        /// Gets or sets the collection used to generate rectangles rendered on the chart.
+        /// </summary>
         public ObservableCollection<SlideChartDataPoint> VisibleDataSeries
         {
             get;
             set;
         }
 
+        /// <summary>
+        /// Gets or sets the format string of the date used in when saving data to file.
+        /// </summary>
         private string DateTimeFormat { get; set; } = "yyyyMMdd-HHmmss";
 
+        /// <summary>
+        /// Adds a data point to the collection in memory. This is also
+        /// added to the collection used to render the rectangles in the chart area.
+        /// </summary>
+        /// <param name="data">Data point to add.</param>
+        /// <returns>True always.</returns>
         public bool AppendData(SlideChartDataPoint data)
         {
             lock (_dataLock)
@@ -271,6 +304,9 @@ namespace HeartRateHistory.ViewModels
             return true;
         }
 
+        /// <summary>
+        /// Removes all data points from memory and from the chart rendering collection.
+        /// </summary>
         public void Clear()
         {
             lock (_dataLock)
@@ -284,6 +320,9 @@ namespace HeartRateHistory.ViewModels
             });
         }
 
+        /// <summary>
+        /// Reads the config file form disk again and updates properties accordingly.
+        /// </summary>
         public void NotifyReloadConfig()
         {
             ReadConfig();
@@ -299,6 +338,10 @@ namespace HeartRateHistory.ViewModels
             }
         }
 
+        /// <summary>
+        /// Called when the window is resized, the existing data source items in the chart area
+        /// are removed and added again from memory.
+        /// </summary>
         public void VisibleReloadFromData()
         {
             lock (_dataLock)
@@ -318,6 +361,10 @@ namespace HeartRateHistory.ViewModels
             }
         }
 
+        /// <summary>
+        /// Writes the collection of data points in memory to file.
+        /// </summary>
+        /// <param name="filename">Filename to write to.</param>
         public void WriteValuesToFile(string filename)
         {
             using (System.IO.StreamWriter sw = new System.IO.StreamWriter(filename))
@@ -335,6 +382,10 @@ namespace HeartRateHistory.ViewModels
             }
         }
 
+        /// <summary>
+        /// If the settings reload shortens the length of items in memory, drop
+        /// the oldest items until under bound.
+        /// </summary>
         private void TruncateArchive()
         {
             lock (_dataLock)
@@ -346,6 +397,10 @@ namespace HeartRateHistory.ViewModels
             }
         }
 
+        /// <summary>
+        /// Loads settings from object and sets properties.
+        /// </summary>
+        /// <param name="settingSource">Settings collection to read from.</param>
         private void LoadConfig(SettingsCollection settingSource)
         {
             DateTimeFormat = settingSource.Items.First(x => x.Key == SharedConfig.DateTimeFormatKey).CurrentValue;
@@ -357,6 +412,9 @@ namespace HeartRateHistory.ViewModels
             MaxItemsInMemory = int.Parse(settingSource.Items.First(x => x.Key == SharedConfig.MaxItemsInMemoryKey).CurrentValue);
         }
 
+        /// <summary>
+        /// Loads settings from disk.
+        /// </summary>
         private void ReadConfig()
         {
             var settingSource = SettingsCollection.FromFile(SharedConfig.SettingsFileName);

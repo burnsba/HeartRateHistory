@@ -20,16 +20,6 @@ namespace HeartRateHistory.HotConfig
         public List<Setting> Items { get; set; }
 
         /// <summary>
-        /// Writes current object back to the settings file.
-        /// </summary>
-        public void SaveChanges()
-        {
-            string output = JsonConvert.SerializeObject(this, Formatting.Indented);
-
-            System.IO.File.WriteAllText(_path, output);
-        }
-
-        /// <summary>
         /// Loads settings from file.
         /// </summary>
         /// <param name="path">Path of file to load.</param>
@@ -47,6 +37,16 @@ namespace HeartRateHistory.HotConfig
             settings._path = path;
 
             return settings;
+        }
+
+        /// <summary>
+        /// Writes current object back to the settings file.
+        /// </summary>
+        public void SaveChanges()
+        {
+            string output = JsonConvert.SerializeObject(this, Formatting.Indented);
+
+            System.IO.File.WriteAllText(_path, output);
         }
 
         /// <summary>

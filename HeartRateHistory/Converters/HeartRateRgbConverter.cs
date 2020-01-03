@@ -1,25 +1,31 @@
-﻿using HeartRateHistory.HotConfig;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
+using HeartRateHistory.HotConfig;
 
 namespace HeartRateHistory.Converters
 {
+    /// <summary>
+    /// Describes how to convert a heartrate to a color.
+    /// </summary>
     public static class HeartRateRgbConverter
     {
-        private static SolidColorBrush Min = new SolidColorBrush(Color.FromArgb(byte.MaxValue, 0, byte.MaxValue, 0));
-        private static SolidColorBrush Max = new SolidColorBrush(Color.FromArgb(byte.MaxValue, byte.MaxValue, 0, 0));
-        private static List<SolidColorBrush> IntervalValues = null;
-        private static int[] IntervalIndexMap;
-
         private static int _colorIntervals = 0;
-        private static int _minCutoff = int.MaxValue;
-        private static int _maxCutoff = int.MinValue;
         private static int _cutoffRange = 0;
-        
+        private static int[] _intervalIndexMap;
+        private static List<SolidColorBrush> _intervalValues = null;
+        private static bool _isSetup = false;
+        private static SolidColorBrush _max = new SolidColorBrush(Color.FromArgb(byte.MaxValue, byte.MaxValue, 0, 0));
+        private static int _maxCutoff = int.MinValue;
+        private static SolidColorBrush _min = new SolidColorBrush(Color.FromArgb(byte.MaxValue, 0, byte.MaxValue, 0));
+        private static int _minCutoff = int.MaxValue;
+
+        /// <summary>
+        /// Gets or sets the number of possible colors.
+        /// </summary>
         private static int ColorIntervals
         {
             get
@@ -37,40 +43,10 @@ namespace HeartRateHistory.Converters
                 _colorIntervals = value;
             }
         }
-        private static int MinCutoff
-        {
-            get
-            {
-                if (!_isSetup)
-                {
-                    Setup();
-                }
 
-                return _minCutoff;
-            }
-
-            set
-            {
-                _minCutoff = value;
-            }
-        }
-        private static int MaxCutoff
-        {
-            get
-            {
-                if (!_isSetup)
-                {
-                    Setup();
-                }
-
-                return _maxCutoff;
-            }
-
-            set
-            {
-                _maxCutoff = value;
-            }
-        }
+        /// <summary>
+        /// Gets or sets the range (scaled from zero) of available heartrates.
+        /// </summary>
         private static int CutoffRange
         {
             get
@@ -89,66 +65,108 @@ namespace HeartRateHistory.Converters
             }
         }
 
+        /// <summary>
+        /// Gets or sets the least upper bound of the last color interval heart rate.
+        /// </summary>
+        private static int MaxCutoff
+        {
+            get
+            {
+                if (!_isSetup)
+                {
+                    Setup();
+                }
 
-        private static bool _isSetup = false;
+                return _maxCutoff;
+            }
 
+            set
+            {
+                _maxCutoff = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the greatest lower bound of the first color interval heart rate.
+        /// </summary>
+        private static int MinCutoff
+        {
+            get
+            {
+                if (!_isSetup)
+                {
+                    Setup();
+                }
+
+                return _minCutoff;
+            }
+
+            set
+            {
+                _minCutoff = value;
+            }
+        }
+
+        /// <summary>
+        /// Gets the appropriate color to render a particular heartrate value.
+        /// </summary>
+        /// <param name="val">Heartrate value.</param>
+        /// <returns>Color brush to render heartrate.</returns>
         public static System.Windows.Media.Brush FromInt(int val)
         {
-            if (object.ReferenceEquals(null, IntervalValues))
+            if (object.ReferenceEquals(null, _intervalValues))
             {
                 Setup();
-                BuildIntervalValues();
             }
 
             if (val < MinCutoff)
             {
-                return Min;
+                return _min;
             }
             else if (val > MaxCutoff)
             {
-                return Max;
+                return _max;
             }
 
             var scaledValue = (int)((((decimal)val - (decimal)MinCutoff) / (decimal)CutoffRange) * (decimal)byte.MaxValue);
 
             if (scaledValue < 3)
             {
-                return Min;
+                return _min;
             }
             else if (scaledValue > byte.MaxValue - 3)
             {
-                return Max;
+                return _max;
             }
             else
             {
-                var colorIndex = IntervalIndexMap[scaledValue];
+                var colorIndex = _intervalIndexMap[scaledValue];
 
-                return IntervalValues[colorIndex];
+                return _intervalValues[colorIndex];
             }
         }
 
+        /// <summary>
+        /// Loads settings and sets intervals.
+        /// </summary>
         public static void Setup()
         {
             ReloadConfig();
-            
             _cutoffRange = _maxCutoff - _minCutoff;
 
             _isSetup = true;
+
+            // can't BuildIntervalValues until _isSetup == true
+            BuildIntervalValues();
         }
 
-        private static void ReloadConfig()
-        {
-            var settingSource = SettingsCollection.FromFile(SharedConfig.SettingsFileName);
-
-            _colorIntervals = int.Parse(settingSource.Items.First(x => x.Key == SharedConfig.ColorIntervalsKey).CurrentValue);
-            _minCutoff = int.Parse(settingSource.Items.First(x => x.Key == SharedConfig.HeartRateGreenFloorKey).CurrentValue);
-            _maxCutoff = int.Parse(settingSource.Items.First(x => x.Key == SharedConfig.HeartRateRedCeilingKey).CurrentValue);
-        }
-
+        /// <summary>
+        /// Creates the actual intervals used to determine colors for heartrates.
+        /// </summary>
         private static void BuildIntervalValues()
         {
-            IntervalValues = new List<SolidColorBrush>();
-            IntervalIndexMap = new int[byte.MaxValue];
+            _intervalValues = new List<SolidColorBrush>();
+            _intervalIndexMap = new int[byte.MaxValue];
 
             var stepSize = byte.MaxValue / ColorIntervals;
             var stepCount = byte.MaxValue / (ColorIntervals * 2);
@@ -157,25 +175,38 @@ namespace HeartRateHistory.Converters
             for (int step = stepSize; step < byte.MaxValue; step += stepSize)
             {
                 var b = new SolidColorBrush(Color.FromArgb(byte.MaxValue, (byte)step, byte.MaxValue, 0));
-                IntervalValues.Add(b);
+                _intervalValues.Add(b);
             }
 
             // Build yellow to red
             for (int step = byte.MaxValue - stepSize; step > 0; step -= stepSize)
             {
                 var b = new SolidColorBrush(Color.FromArgb(byte.MaxValue, byte.MaxValue, (byte)step, 0));
-                IntervalValues.Add(b);
+                _intervalValues.Add(b);
             }
 
             // scaled values to indeces
-            for (int i=0, currentIndexMap=0; i<byte.MaxValue; i++)
+            for (int i = 0, currentIndexMap = 0; i < byte.MaxValue; i++)
             {
-                IntervalIndexMap[i] = currentIndexMap;
-                if (i > 0 && i % stepCount == 0 && currentIndexMap + 1 < IntervalValues.Count)
+                _intervalIndexMap[i] = currentIndexMap;
+                if (i > 0 && i % stepCount == 0 && currentIndexMap + 1 < _intervalValues.Count)
                 {
                     currentIndexMap++;
                 }
             }
+        }
+
+        /// <summary>
+        /// Reads the config file and sets settings.
+        /// </summary>
+        private static void ReloadConfig()
+        {
+            var settingSource = SettingsCollection.FromFile(SharedConfig.SettingsFileName);
+
+            // Don't reference the properties, they will trigger this method if not set.
+            _colorIntervals = int.Parse(settingSource.Items.First(x => x.Key == SharedConfig.ColorIntervalsKey).CurrentValue);
+            _minCutoff = int.Parse(settingSource.Items.First(x => x.Key == SharedConfig.HeartRateGreenFloorKey).CurrentValue);
+            _maxCutoff = int.Parse(settingSource.Items.First(x => x.Key == SharedConfig.HeartRateRedCeilingKey).CurrentValue);
         }
     }
 }

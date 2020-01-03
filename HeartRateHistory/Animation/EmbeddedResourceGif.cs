@@ -9,8 +9,20 @@ using System.Windows.Media.Imaging;
 
 namespace HeartRateHistory.Animation
 {
+    /// <summary>
+    /// Class to manage gif file from embedded resource.
+    /// </summary>
     public class EmbeddedResourceGif : IDisposable
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EmbeddedResourceGif"/> class.
+        /// </summary>
+        /// <param name="embeddedResourcePath">Path to embedded resource.</param>
+        /// <example>
+        /// <code>
+        /// var heartAnimation = new Animation.EmbeddedResourceGif("HeartRateHistory.img.heart.gif");
+        /// </code>
+        /// </example>
         public EmbeddedResourceGif(string embeddedResourcePath)
         {
             Frames = new List<EmbeddedResourceGifFrame>();
@@ -29,10 +41,17 @@ namespace HeartRateHistory.Animation
             }
         }
 
+        /// <summary>
+        /// Gets or sets the path to the embedded resource.
+        /// </summary>
         public string EmbeddedResourcePath { get; set; }
 
+        /// <summary>
+        /// Gets or sets the collection of frames within the gif.
+        /// </summary>
         public List<EmbeddedResourceGifFrame> Frames { get; set; }
 
+        /// <inheritdoc />
         public void Dispose()
         {
             if (!object.ReferenceEquals(null, Frames))
@@ -44,6 +63,13 @@ namespace HeartRateHistory.Animation
             }
         }
 
+        /// <summary>
+        /// Creates a storyboard for the WPF image from this gif. Frame duration within the gif is ignored,
+        /// each frame is given an equal duration based on the <paramref name="totalDuration"/>.
+        /// </summary>
+        /// <param name="wpfImage">Image to create storyboard for.</param>
+        /// <param name="totalDuration">Total duration of animation.</param>
+        /// <returns>Storyboard for animation.</returns>
         public Storyboard MakeWpfImageStoryboard(System.Windows.Controls.Image wpfImage, TimeSpan totalDuration)
         {
             var sb = new Storyboard();
@@ -57,6 +83,11 @@ namespace HeartRateHistory.Animation
             return sb;
         }
 
+        /// <summary>
+        /// Helper function, creates the necessary keyframes for the storyboard.
+        /// </summary>
+        /// <param name="totalDuration">Total duration of animation. Each keyframe is given a duration of <paramref name="totalDuration"/> / <see cref="EmbeddedResourceGif.Frames"/>.Count.</param>
+        /// <returns>Keyframe animation.</returns>
         private ObjectAnimationUsingKeyFrames ToAnimationFlat(TimeSpan totalDuration)
         {
             var oaukf = new ObjectAnimationUsingKeyFrames();

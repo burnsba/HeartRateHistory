@@ -39,6 +39,9 @@ namespace HeartRateHistory.Windows
         private Storyboard _heartStoryboard;
         private MainViewModel _vm;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MainWindow"/> class.
+        /// </summary>
         public MainWindow()
         {
             InitializeComponent();

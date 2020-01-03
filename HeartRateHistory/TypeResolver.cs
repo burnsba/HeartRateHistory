@@ -16,7 +16,6 @@ namespace HeartRateHistory
     /// </summary>
     public static class TypeResolver
     {
-
         /// <summary>
         /// List of types of known input handlers.
         /// </summary>
@@ -26,11 +25,6 @@ namespace HeartRateHistory
         /// List of types of known config data providers.
         /// </summary>
         private static List<Type> _configDataProviderTypes = new List<Type>();
-
-        /// <summary>
-        /// Whether or not plugins have already been loaded.
-        /// </summary>
-        private static bool _pluginsLoaded = false;
 
         /// <summary>
         /// Whether or not data providers have already been loaded.

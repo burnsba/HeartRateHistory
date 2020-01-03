@@ -9,21 +9,32 @@ namespace HeartRateHistory.HotConfig
     /// </summary>
     public abstract class ConfigSettingBase : IConfigSetting
     {
+        /// <summary>
+        /// Underlying setting.
+        /// </summary>
         protected Setting _settingsItem = null;
 
-        public bool IsModified { get; set; } = false;
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ConfigSettingBase"/> class.
+        /// </summary>
+        /// <param name="item">Item source.</param>
+        public ConfigSettingBase(Setting item)
+        {
+            _settingsItem = item.Clone();
+        }
 
         /// <inheritdoc />
-        public string Key
+        public string CurrentValue
         {
             get
             {
-                return _settingsItem.Key;
+                return _settingsItem.CurrentValue;
             }
 
             set
             {
-                _settingsItem.Key = value;
+                _settingsItem.CurrentValue = value;
+                IsModified = true;
             }
         }
 
@@ -55,29 +66,27 @@ namespace HeartRateHistory.HotConfig
             }
         }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether this setting has been changed.
+        /// </summary>
+        public bool IsModified { get; set; } = false;
+
         /// <inheritdoc />
-        public string CurrentValue
+        public string Key
         {
             get
             {
-                return _settingsItem.CurrentValue;
+                return _settingsItem.Key;
             }
 
             set
             {
-                _settingsItem.CurrentValue = value;
-                IsModified = true;
+                _settingsItem.Key = value;
             }
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ConfigSettingBase"/> class.
-        /// </summary>
-        /// <param name="item">Item source.</param>
-        public ConfigSettingBase(Setting item)
-        {
-            _settingsItem = item.Clone();
-        }
+        /// <inheritdoc />
+        public abstract void Dispose();
 
         /// <summary>
         /// Converts back to a json setttings item.
@@ -87,8 +96,5 @@ namespace HeartRateHistory.HotConfig
         {
             return _settingsItem;
         }
-
-        /// <inheritdoc />
-        public abstract void Dispose();
     }
 }

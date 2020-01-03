@@ -13,7 +13,7 @@ namespace HeartRateHistory.HotConfig
         /// Default/unknown.
         /// </summary>
         Unknown = 0,
-        
+
         /// <summary>
         /// Textbox.
         /// </summary>

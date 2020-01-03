@@ -25,8 +25,6 @@ namespace HeartRateHistory.Views
     /// </summary>
     public partial class SlideChart : UserControl
     {
-        private Timer _rescaleTimeoutTimer;
-
         private const int Line150StartHeight = 150;
         private const int Line125StartHeight = 125;
         private const int Line100StartHeight = 100;
@@ -38,6 +36,11 @@ namespace HeartRateHistory.Views
         private const int Line75LabelStartHeight = 64;
         private const int Line50LabelStartHeight = 39;
 
+        private Timer _rescaleTimeoutTimer;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SlideChart"/> class.
+        /// </summary>
         public SlideChart()
         {
             InitializeComponent();

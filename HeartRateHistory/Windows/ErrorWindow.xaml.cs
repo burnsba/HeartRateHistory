@@ -15,14 +15,14 @@ using HeartRateHistory.ViewModels;
 namespace HeartRateHistory.Windows
 {
     /// <summary>
-    /// Interaction logic for ErrorWindow.xaml
+    /// Interaction logic for ErrorWindow.xaml .
     /// </summary>
     public partial class ErrorWindow : Window, ICloseable
     {
         private ErrorWindowViewModel _vm = null;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MainWindow"/> class.
+        /// Initializes a new instance of the <see cref="ErrorWindow"/> class.
         /// </summary>
         /// <param name="vm">ViewModel for error window.</param>
         public ErrorWindow(ErrorWindowViewModel vm)

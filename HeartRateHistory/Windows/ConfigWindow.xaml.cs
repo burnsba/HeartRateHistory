@@ -15,7 +15,7 @@ using HeartRateHistory.ViewModels;
 namespace HeartRateHistory.Windows
 {
     /// <summary>
-    /// Interaction logic for SkinConfigWindow.xaml
+    /// Interaction logic for SkinConfigWindow.xaml .
     /// </summary>
     public partial class ConfigWindow : Window, ICloseable
     {
@@ -24,11 +24,11 @@ namespace HeartRateHistory.Windows
         /// <summary>
         /// Initializes a new instance of the <see cref="ConfigWindow"/> class.
         /// </summary>
-        /// <param name="availableSkinViewModel">Source info.</param>
+        /// <param name="parent">Parent to notify if settings change.</param>
         public ConfigWindow(MainViewModel parent)
         {
             InitializeComponent();
-            
+
             _vm = new ConfigViewModel(parent);
 
             DataContext = _vm;
