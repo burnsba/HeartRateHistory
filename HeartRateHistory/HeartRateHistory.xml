@@ -134,6 +134,11 @@
             Describes how to convert a heartrate to a color.
             </summary>
         </member>
+        <member name="P:HeartRateHistory.Converters.HeartRateRgbConverter.Instance">
+            <summary>
+            Gets the singleton instance.
+            </summary>
+        </member>
         <member name="P:HeartRateHistory.Converters.HeartRateRgbConverter.ColorIntervals">
             <summary>
             Gets or sets the number of possible colors.
@@ -169,11 +174,6 @@
         <member name="M:HeartRateHistory.Converters.HeartRateRgbConverter.BuildIntervalValues">
             <summary>
             Creates the actual intervals used to determine colors for heartrates.
-            </summary>
-        </member>
-        <member name="M:HeartRateHistory.Converters.HeartRateRgbConverter.ReloadConfig">
-            <summary>
-            Reads the config file and sets settings.
             </summary>
         </member>
         <member name="T:HeartRateHistory.Converters.SlideChartDataPointToRectangleConverter">
@@ -465,7 +465,7 @@
         </member>
         <member name="T:HeartRateHistory.HotConfig.ConfigSettingItem">
             <summary>
-            For a sing setting from the settings.json file that can have multiple values, this
+            For a single setting from the settings.json file that can have multiple values, this
             is a container for one of those multiple values.
             </summary>
         </member>
@@ -667,6 +667,197 @@
             </summary>
             <returns>Dictionary of Key,CurrentValue pairs.</returns>
         </member>
+        <member name="T:HeartRateHistory.MessageBus.IMessageBusNotification">
+            <summary>
+            Empty interface to specify message bus notification events.
+            </summary>
+        </member>
+        <member name="T:HeartRateHistory.MessageBus.MessageBus">
+            <summary>
+            Publish/subscribe message bus. Allows event notification across view models without attaching event handlers.
+            This should only save weak references to objects.
+            </summary>
+        </member>
+        <member name="F:HeartRateHistory.MessageBus.MessageBus._subscriptions">
+            <summary>
+            Collection of known subscriptions.
+            </summary>
+        </member>
+        <member name="M:HeartRateHistory.MessageBus.MessageBus.Subscribe``2(System.String,``1,System.String)">
+            <summary>
+            Creates a new subscription. If a subscription with the same parameters already exists, nothing happens.
+            </summary>
+            <typeparam name="TSubscribeTo">Type of object being subscribed to, that will transmit event.</typeparam>
+            <typeparam name="TSubscriber">Type of object receiving notifications.</typeparam>
+            <param name="subscribeToEvent">Name of the event to subscribe to.</param>
+            <param name="subscriber">Object receiving notifications.</param>
+            <param name="eventHandlerMethodName">Name of method that will be invoked via reflection to handle notification.</param>
+        </member>
+        <member name="M:HeartRateHistory.MessageBus.MessageBus.Subscribe``2(System.String,``1,System.EventHandler)">
+            <summary>
+            Creates a new subscription. If a subscription with the same parameters already exists, nothing happens.
+            </summary>
+            <typeparam name="TSubscribeTo">Type of object being subscribed to, that will transmit event.</typeparam>
+            <typeparam name="TSubscriber">Type of object receiving notifications.</typeparam>
+            <param name="subscribeToEvent">Name of the event to subscribe to.</param>
+            <param name="subscriber">Object receiving notifications.</param>
+            <param name="eventHandler">Method that will be invoked to handle notification.</param>
+        </member>
+        <member name="M:HeartRateHistory.MessageBus.MessageBus.Notify(System.Object,System.String,System.EventArgs)">
+            <summary>
+            Notify listeners of event.
+            </summary>
+            <param name="eventSource">Object sending notification.</param>
+            <param name="notificationEvent">Name of the event sending notification.</param>
+            <param name="args">Notification arguments.</param>
+        </member>
+        <member name="M:HeartRateHistory.MessageBus.MessageBus.CastIsValid(System.Object,System.Type)">
+            <summary>
+            Used to determine if a weak reference is still valid by casting to type.
+            </summary>
+            <param name="obj">Reference to attempt cast.</param>
+            <param name="t">Type to cast to.</param>
+            <returns>True if cast is non-null, false otherwise.</returns>
+        </member>
+        <member name="T:HeartRateHistory.MessageBus.MessageBus.SubscriptionContainerInfo">
+            <summary>
+            Top level subscription information.
+            </summary>
+        </member>
+        <member name="M:HeartRateHistory.MessageBus.MessageBus.SubscriptionContainerInfo.#ctor(System.Type)">
+            <summary>
+            Initializes a new instance of the <see cref="T:HeartRateHistory.MessageBus.MessageBus.SubscriptionContainerInfo"/> class.
+            </summary>
+            <param name="subscribeToContainerType">Type of object being subscribed to, that will transmit event.</param>
+        </member>
+        <member name="P:HeartRateHistory.MessageBus.MessageBus.SubscriptionContainerInfo.SubscribeToContainerType">
+            <summary>
+            Gets the type that will send notification events.
+            </summary>
+        </member>
+        <member name="P:HeartRateHistory.MessageBus.MessageBus.SubscriptionContainerInfo.Events">
+            <summary>
+            Gets the list of events that might send notifications.
+            </summary>
+        </member>
+        <member name="M:HeartRateHistory.MessageBus.MessageBus.SubscriptionContainerInfo.Notify(System.Object,System.String,System.EventArgs)">
+            <summary>
+            Notify listeners of event.
+            </summary>
+            <param name="eventSource">Object sending notification.</param>
+            <param name="notificationEvent">Name of the event sending notification.</param>
+            <param name="args">Notification arguments.</param>
+        </member>
+        <member name="M:HeartRateHistory.MessageBus.MessageBus.SubscriptionContainerInfo.InvalidateChildReference(HeartRateHistory.MessageBus.MessageBus.SubscriptionEventInfo)">
+            <summary>
+            Removes child from list of events.
+            </summary>
+            <param name="item">Child to remove.</param>
+        </member>
+        <member name="M:HeartRateHistory.MessageBus.MessageBus.SubscriptionContainerInfo.InvalidateReference">
+            <summary>
+            Notification to remove this from parent collection.
+            </summary>
+        </member>
+        <member name="M:HeartRateHistory.MessageBus.MessageBus.SubscriptionContainerInfo.ToString">
+            <inheritdoc />
+        </member>
+        <member name="T:HeartRateHistory.MessageBus.MessageBus.SubscriptionEventInfo">
+            <summary>
+            Information about event on an object.
+            </summary>
+        </member>
+        <member name="M:HeartRateHistory.MessageBus.MessageBus.SubscriptionEventInfo.#ctor(HeartRateHistory.MessageBus.MessageBus.SubscriptionContainerInfo,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:HeartRateHistory.MessageBus.MessageBus.SubscriptionEventInfo"/> class.
+            </summary>
+            <param name="parent">Parent container.</param>
+            <param name="eventName">Name of the event sending notification.</param>
+        </member>
+        <member name="P:HeartRateHistory.MessageBus.MessageBus.SubscriptionEventInfo.EventName">
+            <summary>
+            Gets name of the event sending notification.
+            </summary>
+        </member>
+        <member name="P:HeartRateHistory.MessageBus.MessageBus.SubscriptionEventInfo.Subscribers">
+            <summary>
+            Gets the list of subscribers for this event.
+            </summary>
+        </member>
+        <member name="M:HeartRateHistory.MessageBus.MessageBus.SubscriptionEventInfo.Notify(System.Object,System.EventArgs)">
+            <summary>
+            Notify listeners of event.
+            </summary>
+            <param name="eventSource">Object sending notification.</param>
+            <param name="args">Notification arguments.</param>
+        </member>
+        <member name="M:HeartRateHistory.MessageBus.MessageBus.SubscriptionEventInfo.InvalidateChildReference(HeartRateHistory.MessageBus.MessageBus.SubscriberInfo)">
+            <summary>
+            Removes child from list of subscribers.
+            </summary>
+            <param name="item">Child to remove.</param>
+        </member>
+        <member name="M:HeartRateHistory.MessageBus.MessageBus.SubscriptionEventInfo.InvalidateReference">
+            <summary>
+            Notification to remove this from parent collection.
+            </summary>
+        </member>
+        <member name="M:HeartRateHistory.MessageBus.MessageBus.SubscriptionEventInfo.ToString">
+            <inheritdoc />
+        </member>
+        <member name="T:HeartRateHistory.MessageBus.MessageBus.SubscriberInfo">
+            <summary>
+            Information about a subscriber for a particular event on a particular type of object.
+            </summary>
+        </member>
+        <member name="M:HeartRateHistory.MessageBus.MessageBus.SubscriberInfo.#ctor(HeartRateHistory.MessageBus.MessageBus.SubscriptionEventInfo,System.Object,System.Type,System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:HeartRateHistory.MessageBus.MessageBus.SubscriberInfo"/> class.
+            </summary>
+            <param name="parent">Parent container.</param>
+            <param name="subscriber">Object receiving notifications.</param>
+            <param name="subscriberType">Type of object receiving notifications.</param>
+            <param name="eventHandlerMethodName">Name of method that will be invoked via reflection to handle notification.</param>
+        </member>
+        <member name="M:HeartRateHistory.MessageBus.MessageBus.SubscriberInfo.#ctor(HeartRateHistory.MessageBus.MessageBus.SubscriptionEventInfo,System.Object,System.Type,System.EventHandler)">
+            <summary>
+            Initializes a new instance of the <see cref="T:HeartRateHistory.MessageBus.MessageBus.SubscriberInfo"/> class.
+            </summary>
+            <param name="parent">Parent container.</param>
+            <param name="subscriber">Object receiving notifications.</param>
+            <param name="subscriberType">Type of object receiving notifications.</param>
+            <param name="eventHandler">Method that will be invoked to handle notification.</param>
+        </member>
+        <member name="P:HeartRateHistory.MessageBus.MessageBus.SubscriberInfo.SubscriberType">
+            <summary>
+            Gets type of object receiving notifications.
+            </summary>
+        </member>
+        <member name="P:HeartRateHistory.MessageBus.MessageBus.SubscriberInfo.EventHandlerMethodName">
+            <summary>
+            Gets name of method that will be invoked via reflection to handle notification.
+            </summary>
+        </member>
+        <member name="P:HeartRateHistory.MessageBus.MessageBus.SubscriberInfo.Handler">
+            <summary>
+            Gets method that will be invoked to handle notification.
+            </summary>
+        </member>
+        <member name="M:HeartRateHistory.MessageBus.MessageBus.SubscriberInfo.Notify(System.Object,System.EventArgs)">
+            <summary>
+            Notify listeners of event.
+            </summary>
+            <param name="eventSource">Object sending notification.</param>
+            <param name="args">Notification arguments.</param>
+        </member>
+        <member name="M:HeartRateHistory.MessageBus.MessageBus.SubscriberInfo.InvalidateReference">
+            <summary>
+            Notification to remove this from parent collection.
+            </summary>
+        </member>
+        <member name="M:HeartRateHistory.MessageBus.MessageBus.SubscriberInfo.ToString">
+            <inheritdoc />
+        </member>
         <member name="T:HeartRateHistory.Models.SlideChartDataPoint">
             <summary>
             Single data item to be drawn on a chart.
@@ -821,11 +1012,15 @@
             View model for skin config window.
             </summary>
         </member>
-        <member name="M:HeartRateHistory.ViewModels.ConfigViewModel.#ctor(HeartRateHistory.ViewModels.MainViewModel)">
+        <member name="F:HeartRateHistory.ViewModels.ConfigViewModel.SettingsChangedNotification">
+            <summary>
+            Notification event for when the settings have changed on disk.
+            </summary>
+        </member>
+        <member name="M:HeartRateHistory.ViewModels.ConfigViewModel.#ctor">
             <summary>
             Initializes a new instance of the <see cref="T:HeartRateHistory.ViewModels.ConfigViewModel"/> class.
             </summary>
-            <param name="parent">Parent to notify if config settings change.</param>
         </member>
         <member name="P:HeartRateHistory.ViewModels.ConfigViewModel.CancelCommand">
             <summary>
@@ -1024,11 +1219,6 @@
         <member name="P:HeartRateHistory.ViewModels.MainViewModel.SlideChartViewModel">
             <summary>
             Gets or sets the associated viewmodel for the chart.
-            </summary>
-        </member>
-        <member name="M:HeartRateHistory.ViewModels.MainViewModel.NotifyReloadConfig">
-            <summary>
-            Notification to reload the config settings from disk.
             </summary>
         </member>
         <member name="M:HeartRateHistory.ViewModels.MainViewModel.Start">
@@ -1270,11 +1460,10 @@
             ConfigWindow
             </summary>
         </member>
-        <member name="M:HeartRateHistory.Windows.ConfigWindow.#ctor(HeartRateHistory.ViewModels.MainViewModel)">
+        <member name="M:HeartRateHistory.Windows.ConfigWindow.#ctor">
             <summary>
             Initializes a new instance of the <see cref="T:HeartRateHistory.Windows.ConfigWindow"/> class.
             </summary>
-            <param name="parent">Parent to notify if settings change.</param>
         </member>
         <member name="M:HeartRateHistory.Windows.ConfigWindow.InitializeComponent">
             <summary>

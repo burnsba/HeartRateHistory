@@ -123,7 +123,9 @@ namespace HeartRateHistory.Windows
                 _datxferStoryboard.Seek(TimeSpan.Zero, TimeSeekOrigin.BeginTime);
                 _datxferStoryboard.Resume();
 
-                if (_timeSincelastUpdate.Elapsed == TimeSpan.Zero || _timeSincelastUpdate.Elapsed > AdjustHeartGifBpmInterval)
+                if (e.HeartRate > 1
+                    && scaleFactor > 0
+                    && (_timeSincelastUpdate.Elapsed == TimeSpan.Zero || _timeSincelastUpdate.Elapsed > AdjustHeartGifBpmInterval))
                 {
                     _timeSincelastUpdate.Stop();
 

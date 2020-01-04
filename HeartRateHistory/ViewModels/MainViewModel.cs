@@ -52,7 +52,9 @@ namespace HeartRateHistory.ViewModels
         {
             ReadConfig();
 
-            ShowAppConfigWindowCommand = new CommandHandler(() => Workspace.CreateSingletonWindow<ConfigWindow>(this));
+            MessageBus.MessageBus.Subscribe<ConfigViewModel, MainViewModel>(nameof(ConfigViewModel.SettingsChangedNotification), this, SettingsChangeHandler);
+
+            ShowAppConfigWindowCommand = new CommandHandler(() => Workspace.CreateSingletonWindow<ConfigWindow>());
 
             PauseResumeCommand = new CommandHandler(PauseResumeCommandAction, x => IsConnected);
             ConnectDisconnectCommand = new CommandHandler(ConnectDisconnectCommandAction, x => GetCanConnectDisconnect());
@@ -330,16 +332,6 @@ namespace HeartRateHistory.ViewModels
         public SlideChartViewModel SlideChartViewModel { get; set; }
 
         /// <summary>
-        /// Notification to reload the config settings from disk.
-        /// </summary>
-        public void NotifyReloadConfig()
-        {
-            ReadConfig();
-
-            SlideChartViewModel.NotifyReloadConfig();
-        }
-
-        /// <summary>
         /// Connects to the bluetooth device and starts receiving data. Data is then
         /// forwarded to the chart.
         /// </summary>
@@ -534,6 +526,11 @@ namespace HeartRateHistory.ViewModels
         private void OnStopNotification()
         {
             StopNotification?.Invoke(this, null);
+        }
+
+        private void SettingsChangeHandler(object sender, EventArgs args)
+        {
+            ReadConfig();
         }
     }
 }

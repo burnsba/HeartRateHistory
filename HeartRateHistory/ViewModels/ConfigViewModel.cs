@@ -4,6 +4,7 @@ using System.Linq;
 using System.Windows.Input;
 using BurnsBac.Mvvm;
 using HeartRateHistory.HotConfig;
+using HeartRateHistory.MessageBus;
 using HeartRateHistory.Windows;
 
 namespace HeartRateHistory.ViewModels
@@ -13,13 +14,17 @@ namespace HeartRateHistory.ViewModels
     /// </summary>
     public class ConfigViewModel : WindowViewModelBase, IDisposable
     {
+        /// <summary>
+        /// Notification event for when the settings have changed on disk.
+        /// </summary>
+        public IMessageBusNotification SettingsChangedNotification;
+
         private SettingsCollection _settingSource = null;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ConfigViewModel"/> class.
         /// </summary>
-        /// <param name="parent">Parent to notify if config settings change.</param>
-        public ConfigViewModel(MainViewModel parent)
+        public ConfigViewModel()
         {
             _settingSource = SettingsCollection.FromFile(SharedConfig.SettingsFileName);
 
@@ -47,8 +52,6 @@ namespace HeartRateHistory.ViewModels
             OkCommand = new RelayCommand<ICloseable>(w =>
             {
                 SaveChanges();
-                parent.NotifyReloadConfig();
-                Converters.HeartRateRgbConverter.Setup();
                 CloseWindow(w);
             });
         }
@@ -87,6 +90,7 @@ namespace HeartRateHistory.ViewModels
         /// </summary>
         public void SaveChanges()
         {
+            bool anyChanges = false;
             foreach (var uiitem in SettingItems)
             {
                 var settingItem = _settingSource.Items.Where(x => x.Key == uiitem.Key && uiitem.IsModified).FirstOrDefault();
@@ -94,10 +98,15 @@ namespace HeartRateHistory.ViewModels
                 if (!object.ReferenceEquals(null, settingItem))
                 {
                     settingItem.CurrentValue = uiitem.CurrentValue ?? string.Empty;
+                    anyChanges = true;
                 }
             }
 
-            _settingSource.SaveChanges();
+            if (anyChanges)
+            {
+                _settingSource.SaveChanges();
+                MessageBus.MessageBus.Notify(this, nameof(SettingsChangedNotification), new EventArgs());
+            }
         }
 
         /// <inheritdoc />

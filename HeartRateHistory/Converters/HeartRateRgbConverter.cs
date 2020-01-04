@@ -11,7 +11,7 @@ namespace HeartRateHistory.Converters
     /// <summary>
     /// Describes how to convert a heartrate to a color.
     /// </summary>
-    public static class HeartRateRgbConverter
+    public class HeartRateRgbConverter
     {
         private static int _colorIntervals = 0;
         private static int _cutoffRange = 0;
@@ -22,6 +22,15 @@ namespace HeartRateHistory.Converters
         private static int _maxCutoff = int.MinValue;
         private static SolidColorBrush _min = new SolidColorBrush(Color.FromArgb(byte.MaxValue, 0, byte.MaxValue, 0));
         private static int _minCutoff = int.MaxValue;
+
+        private HeartRateRgbConverter()
+        {
+        }
+
+        /// <summary>
+        /// Gets the singleton instance.
+        /// </summary>
+        public static HeartRateRgbConverter Instance { get; } = new HeartRateRgbConverter();
 
         /// <summary>
         /// Gets or sets the number of possible colors.
@@ -151,8 +160,19 @@ namespace HeartRateHistory.Converters
         /// </summary>
         public static void Setup()
         {
-            ReloadConfig();
+            var settingSource = SettingsCollection.FromFile(SharedConfig.SettingsFileName);
+
+            // Don't reference the properties, they will trigger this method if not set.
+            _colorIntervals = int.Parse(settingSource.Items.First(x => x.Key == SharedConfig.ColorIntervalsKey).CurrentValue);
+            _minCutoff = int.Parse(settingSource.Items.First(x => x.Key == SharedConfig.HeartRateGreenFloorKey).CurrentValue);
+            _maxCutoff = int.Parse(settingSource.Items.First(x => x.Key == SharedConfig.HeartRateRedCeilingKey).CurrentValue);
+
             _cutoffRange = _maxCutoff - _minCutoff;
+
+            if (!_isSetup)
+            {
+                MessageBus.MessageBus.Subscribe<ViewModels.ConfigViewModel, HeartRateRgbConverter>(nameof(ViewModels.ConfigViewModel.SettingsChangedNotification), Instance, SettingsChangeHandler);
+            }
 
             _isSetup = true;
 
@@ -174,14 +194,16 @@ namespace HeartRateHistory.Converters
             // Build green to yellow
             for (int step = stepSize; step < byte.MaxValue; step += stepSize)
             {
-                var b = new SolidColorBrush(Color.FromArgb(byte.MaxValue, (byte)step, byte.MaxValue, 0));
+                // fade out the intensity a bit by back off from max value.
+                var b = new SolidColorBrush(Color.FromArgb(byte.MaxValue - 16, (byte)step, byte.MaxValue - 16, 0));
                 _intervalValues.Add(b);
             }
 
             // Build yellow to red
             for (int step = byte.MaxValue - stepSize; step > 0; step -= stepSize)
             {
-                var b = new SolidColorBrush(Color.FromArgb(byte.MaxValue, byte.MaxValue, (byte)step, 0));
+                // fade out the intensity a bit by back off from max value.
+                var b = new SolidColorBrush(Color.FromArgb(byte.MaxValue - 32, byte.MaxValue - 32, (byte)step, 0));
                 _intervalValues.Add(b);
             }
 
@@ -196,17 +218,9 @@ namespace HeartRateHistory.Converters
             }
         }
 
-        /// <summary>
-        /// Reads the config file and sets settings.
-        /// </summary>
-        private static void ReloadConfig()
+        private static void SettingsChangeHandler(object sender, EventArgs args)
         {
-            var settingSource = SettingsCollection.FromFile(SharedConfig.SettingsFileName);
-
-            // Don't reference the properties, they will trigger this method if not set.
-            _colorIntervals = int.Parse(settingSource.Items.First(x => x.Key == SharedConfig.ColorIntervalsKey).CurrentValue);
-            _minCutoff = int.Parse(settingSource.Items.First(x => x.Key == SharedConfig.HeartRateGreenFloorKey).CurrentValue);
-            _maxCutoff = int.Parse(settingSource.Items.First(x => x.Key == SharedConfig.HeartRateRedCeilingKey).CurrentValue);
+            Setup();
         }
     }
 }

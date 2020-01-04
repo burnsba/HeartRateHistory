@@ -24,12 +24,11 @@ namespace HeartRateHistory.Windows
         /// <summary>
         /// Initializes a new instance of the <see cref="ConfigWindow"/> class.
         /// </summary>
-        /// <param name="parent">Parent to notify if settings change.</param>
-        public ConfigWindow(MainViewModel parent)
+        public ConfigWindow()
         {
             InitializeComponent();
 
-            _vm = new ConfigViewModel(parent);
+            _vm = new ConfigViewModel();
 
             DataContext = _vm;
         }

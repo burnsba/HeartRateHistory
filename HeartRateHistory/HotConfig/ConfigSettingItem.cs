@@ -5,7 +5,7 @@ using System.Text;
 namespace HeartRateHistory.HotConfig
 {
     /// <summary>
-    /// For a sing setting from the settings.json file that can have multiple values, this
+    /// For a single setting from the settings.json file that can have multiple values, this
     /// is a container for one of those multiple values.
     /// </summary>
     public class ConfigSettingItem

@@ -52,6 +52,12 @@ namespace HeartRateHistory.ViewModels
 
             VisibleDataSeries = new ObservableCollection<SlideChartDataPoint>();
 
+            MessageBus.MessageBus.Subscribe<ConfigViewModel, SlideChartViewModel>(nameof(ConfigViewModel.SettingsChangedNotification), this, SettingsChangeHandler);
+
+            // this isn't ideal, but the RgbConvert needs to listen to the messagebus for settings file changes, so make
+            // sure that's loaded at least once.
+            Converters.HeartRateRgbConverter.Setup();
+
             //////AppendData(new SlideChartDataPoint(DateTime.Now.AddSeconds(-4), 77));
             //////AppendData(new SlideChartDataPoint(DateTime.Now, 78));
         }
@@ -420,6 +426,11 @@ namespace HeartRateHistory.ViewModels
             var settingSource = SettingsCollection.FromFile(SharedConfig.SettingsFileName);
 
             LoadConfig(settingSource);
+        }
+
+        private void SettingsChangeHandler(object sender, EventArgs args)
+        {
+            ReadConfig();
         }
     }
 }
