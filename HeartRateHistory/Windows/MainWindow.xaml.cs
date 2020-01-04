@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -34,10 +35,13 @@ namespace HeartRateHistory.Windows
     {
         private static readonly TimeSpan DataXferGifNaturalDuration = new TimeSpan(0, 0, 0, 4, 0);
         private static readonly TimeSpan HeartGifNaturalDuration = new TimeSpan(0, 0, 1);
+        private static readonly TimeSpan AdjustHeartGifBpmInterval = new TimeSpan(0, 0, 5);
 
         private Storyboard _datxferStoryboard;
         private Storyboard _heartStoryboard;
         private MainViewModel _vm;
+
+        private Stopwatch _timeSincelastUpdate;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MainWindow"/> class.
@@ -48,9 +52,8 @@ namespace HeartRateHistory.Windows
 
             _vm = new MainViewModel();
 
-            _vm.PlayOnceImageDataXfer = PlayOnceImageDataXfer;
-            _vm.StopAnimations = StopAnimations;
-            _vm.ChangeHeartRateImageBpm = ChangeHeartRateImageBpm;
+            _vm.StopNotification += StopUpdatesHandler;
+            _vm.DataReceived += HeartRateReceived;
 
             DataContext = _vm;
 
@@ -72,46 +75,44 @@ namespace HeartRateHistory.Windows
 
             heartAnimation.Dispose();
             dataxferAnimation.Dispose();
+
+            _timeSincelastUpdate = new Stopwatch();
         }
 
-        private void ChangeHeartRateImageBpm(int bpm)
+        private void HeartRateReceived(object sender, BurnsBac.WindowsHardware.Bluetooth.Characteristics.HeartRateMeasurement e)
         {
-            if (bpm < 1)
-            {
-                return;
-            }
-
-            double scaleFactor = HeartGifNaturalDuration.TotalSeconds * (double)bpm / 60.0;
+            var currentTime = TimeSpan.Zero;
+            double scaleFactor = HeartGifNaturalDuration.TotalSeconds * (double)e.HeartRate / 60.0;
 
             Dispatcher.Invoke(() =>
             {
-                var currentTime = TimeSpan.Zero;
-
-                // For some reason the unqualified call always throws an InvalidOperationException.
-                // Adding the argument results in the warning text
-                //     System.Windows.Media.Animation Warning: 6 : Unable to perform action because the specified Storyboard was never applied to this object for interactive control.
-                // But seems to work.
-                currentTime = _heartStoryboard.GetCurrentTime(ImageHeart) ?? TimeSpan.Zero;
-
-                _heartStoryboard.RepeatBehavior = RepeatBehavior.Forever;
-                _heartStoryboard.Stop();
-                _heartStoryboard.SpeedRatio = scaleFactor;
-                _heartStoryboard.Begin(ImageHeart, true);
-                _heartStoryboard.Seek(currentTime);
-            });
-        }
-
-        private void PlayOnceImageDataXfer()
-        {
-            Dispatcher.Invoke(() =>
-            {
+                // trigger data transfer notification
                 _datxferStoryboard.Pause(ImageDataXfer);
                 _datxferStoryboard.Seek(ImageDataXfer, TimeSpan.Zero, TimeSeekOrigin.BeginTime);
                 _datxferStoryboard.Resume(ImageDataXfer);
+
+                if (_timeSincelastUpdate.Elapsed == TimeSpan.Zero || _timeSincelastUpdate.Elapsed > AdjustHeartGifBpmInterval)
+                {
+                    _timeSincelastUpdate.Stop();
+
+                    // For some reason the unqualified call always throws an InvalidOperationException.
+                    // Adding the argument results in the warning text
+                    //     System.Windows.Media.Animation Warning: 6 : Unable to perform action because the specified Storyboard was never applied to this object for interactive control.
+                    // But seems to work.
+                    currentTime = _heartStoryboard.GetCurrentTime(ImageHeart) ?? TimeSpan.Zero;
+
+                    _heartStoryboard.RepeatBehavior = RepeatBehavior.Forever;
+                    _heartStoryboard.Stop();
+                    _heartStoryboard.SpeedRatio = scaleFactor;
+                    _heartStoryboard.Begin(ImageHeart, true);
+                    _heartStoryboard.Seek(currentTime);
+
+                    _timeSincelastUpdate.Restart();
+                }
             });
         }
 
-        private void StopAnimations()
+        private void StopUpdatesHandler(object sender, EventArgs e)
         {
             Dispatcher.Invoke(() =>
             {
@@ -121,6 +122,15 @@ namespace HeartRateHistory.Windows
                 _datxferStoryboard.Pause(ImageDataXfer);
                 _datxferStoryboard.Seek(ImageDataXfer, TimeSpan.Zero, TimeSeekOrigin.BeginTime);
             });
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (!object.ReferenceEquals(null, _vm))
+            {
+                _vm.StopNotification -= StopUpdatesHandler;
+                _vm.DataReceived -= HeartRateReceived;
+            }
         }
     }
 }

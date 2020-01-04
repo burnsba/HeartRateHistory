@@ -34,7 +34,6 @@ namespace HeartRateHistory.ViewModels
         private System.Windows.Media.FontFamily _currentHeartRateFontFamily = new System.Windows.Media.FontFamily("Segoe UI");
         private int _currentHeartRateFontSize = 32;
         private string _dataSeriesSaveFile;
-        private Timer _heartPumpTimer;
         private LowEnergyHeartrateSensor _heartRateSensor;
         private bool _isConnected = false;
         private bool _isConnecting = false;
@@ -62,14 +61,12 @@ namespace HeartRateHistory.ViewModels
             ResetCommand = new CommandHandler(() => SlideChartViewModel.Clear());
             SaveCommand = new CommandHandler(() => SlideChartViewModel.WriteValuesToFile(DataSeriesSaveFile));
 
-            _heartPumpTimer = new Timer();
-            _heartPumpTimer.AutoReset = true;
-            _heartPumpTimer.Interval = 5000;
-            _heartPumpTimer.Elapsed += HeartPumpTimer_Elapsed;
-
             _timeSinceUpdateTimer = new Timer();
             _timeSinceUpdateTimer.AutoReset = true;
-            _timeSinceUpdateTimer.Interval = 1000;
+
+            // Drift a bit off exactly 1 second.
+            // (first prime > 1000).
+            _timeSinceUpdateTimer.Interval = 1019;
             _timeSinceUpdateTimer.Elapsed += TimeSinceUpdateTimer_Elapsed;
 
             _connectionWatchdogTimer = new Timer();
@@ -79,6 +76,16 @@ namespace HeartRateHistory.ViewModels
 
             SlideChartViewModel = new SlideChartViewModel(_settingsSource);
         }
+
+        /// <summary>
+        /// Events raised when data is received.
+        /// </summary>
+        public event EventHandler<HeartRateMeasurement> DataReceived;
+
+        /// <summary>
+        /// Event raised when user disconnects from bluetooth device (when <see cref="Stop"/> is called).
+        /// </summary>
+        public event EventHandler StopNotification;
 
         /// <summary>
         /// Gets or sets the address of the bluetooth device to connect to.
@@ -108,37 +115,6 @@ namespace HeartRateHistory.ViewModels
                 return _bluetoothDeviceAddress > 0 && !IsConnecting;
             }
         }
-
-        /// <summary>
-        /// Gets or sets callback method for this viewmodel to invoke to change the heartrate BPM.
-        /// Currently this execuate an action on the main window to change the
-        /// animation of the heartbeat gif.
-        /// </summary>
-        /// <remarks>
-        /// TODO: Change to event.
-        /// </remarks>
-        public Action<int> ChangeHeartRateImageBpm { get; set; }
-
-        /// <summary>
-        /// Gets or sets callback method for this viewmodel to invoke to refesh the "data received" indicator.
-        /// Currently this executes an action on the main window to play
-        /// the data transfer gif one time.
-        /// </summary>
-        /// <remarks>
-        /// TODO: Change to event.
-        /// </remarks>
-        public Action PlayOnceImageDataXfer { get; set; }
-
-        /// <summary>
-        /// Gets or sets callback method for this viewmodel to invoke when disconnected
-        /// from bluetooth device.
-        /// Currently this executes an action on the main window to stop the heart and data
-        /// transfer gifs.
-        /// </summary>
-        /// <remarks>
-        /// TODO: Change to event.
-        /// </remarks>
-        public Action StopAnimations { get; set; }
 
         /// <summary>
         /// Gets or sets the command used by the "Connect/Disconnect" button.
@@ -402,7 +378,6 @@ namespace HeartRateHistory.ViewModels
             SlideChartViewModel.Clear();
 
             _timeSinceUpdateTimer.Start();
-            _heartPumpTimer.Start();
             _connectionWatchdogTimer.Start();
             _isPaused = false;
 
@@ -430,16 +405,17 @@ namespace HeartRateHistory.ViewModels
             _heartRateSensor.Dispose();
             _heartRateSensor = null;
 
-            StopAnimations();
+            OnStopNotification();
 
             _timeSinceUpdateTimer.Stop();
-            _heartPumpTimer.Stop();
             _lastReadValue = -1;
 
             TimeSinceLastUpdate = NoDataTimeSinceLastUpdate;
             CurrentHeartRate = NoDataHeartRate;
 
             IsConnected = false;
+
+            OnStopNotification();
         }
 
         private void ConnectDisconnectCommandAction()
@@ -481,16 +457,6 @@ namespace HeartRateHistory.ViewModels
         }
 
         /// <summary>
-        /// Periodically adjust the heart beat gif.
-        /// </summary>
-        /// <param name="sender">Sender.</param>
-        /// <param name="e">Args.</param>
-        private void HeartPumpTimer_Elapsed(object sender, ElapsedEventArgs e)
-        {
-            ChangeHeartRateImageBpm(_lastReadValue);
-        }
-
-        /// <summary>
         /// Accepts <see cref="BurnsBac.WindowsHardware.Bluetooth.Characteristics.HeartRateMeasurement"/>,
         /// adds data to the chart.
         /// </summary>
@@ -514,10 +480,10 @@ namespace HeartRateHistory.ViewModels
 
             CurrentHeartRate = state.HeartRate.ToString();
 
-            PlayOnceImageDataXfer();
-
             _timeSinceLastUpdate = DateTime.Now;
             _lastReadValue = state.HeartRate;
+
+            OnDataReceived(state);
         }
 
         private void PauseResumeCommandAction()
@@ -558,6 +524,16 @@ namespace HeartRateHistory.ViewModels
             {
                 TimeSinceLastUpdate = NoDataTimeSinceLastUpdate;
             }
+        }
+
+        private void OnDataReceived(HeartRateMeasurement data)
+        {
+            DataReceived?.Invoke(this, data);
+        }
+
+        private void OnStopNotification()
+        {
+            StopNotification?.Invoke(this, null);
         }
     }
 }
