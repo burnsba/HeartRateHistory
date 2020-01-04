@@ -62,16 +62,48 @@ namespace HeartRateHistory.Windows
             _heartStoryboard.RepeatBehavior = RepeatBehavior.Forever;
             _heartStoryboard.Duration = HeartGifNaturalDuration;
             _heartStoryboard.Name = "HeartStoryboard";
-            _heartStoryboard.Begin(ImageHeart, true);
-            _heartStoryboard.Pause(ImageHeart);
+            _heartStoryboard.Begin();
+            _heartStoryboard.Pause();
 
             var dataxferAnimation = new Animation.EmbeddedResourceGif("HeartRateHistory.img.dataxfer_reverse3.gif");
             _datxferStoryboard = dataxferAnimation.MakeWpfImageStoryboard(ImageDataXfer, DataXferGifNaturalDuration);
             _datxferStoryboard.RepeatBehavior = new RepeatBehavior(1);
             _datxferStoryboard.Duration = DataXferGifNaturalDuration;
             _datxferStoryboard.Name = "DatxferStoryboard";
-            _datxferStoryboard.Begin(ImageDataXfer, true);
-            _datxferStoryboard.Pause(ImageDataXfer);
+            _datxferStoryboard.Begin();
+            _datxferStoryboard.Pause();
+
+            /* Storyboard was being called with the framework element as an argument, as well as true to mark "controllable".
+             * i.e.
+             *
+             *     _heartStoryboard.Begin(ImageHeart, true);
+             *
+             * I think the problem is that it's assigning a clock to the ImageHeart, but not to the storyboard.
+             * When GetCurrentTime is called without arguments, it looks up the clock associated with the storyboard,
+             * which is null in this case, because it was never set. The end result is that calling
+             *
+             *     _heartStoryboard.GetCurrentTime();
+             *
+             * Results in an exception:
+             *
+             *     "Cannot perform action because the specified Storyboard was
+             *      not applied to this object for interactive control"
+             *
+             * It seems like there's three options.
+             * (1) Call GetCurrentTime with the ImageHeart. Somehow this only sort of works, and still results
+             * in warning messages in the console. Animation jerks back to the first frame for some reason
+             * when trying to continue at the correct time.
+             * (2) Leave all the storyboard calls with explicit parameters, but somehow start the storyboard
+             * clock. I'm not sure how to do this.
+             * (3) Get rid of all parameters to storyboard calls, just call Begin(). The comment in source
+             *https://github.com/dotnet/wpf/blob/ae1790531c3b993b56eba8b1f0dd395a3ed7de75/src/Microsoft.DotNet.Wpf/src/PresentationFramework/System/Windows/Media/Animation/Storyboard.cs#L1196
+             * says
+             *
+             *     "Begins all animations underneath this storyboard, clock tree starts in "shared clocks" mode."
+             *
+             * This also defaults isControllable to true.
+             * This works for me, no more warnings, no more exceptions.
+             * */
 
             heartAnimation.Dispose();
             dataxferAnimation.Dispose();
@@ -87,24 +119,20 @@ namespace HeartRateHistory.Windows
             Dispatcher.Invoke(() =>
             {
                 // trigger data transfer notification
-                _datxferStoryboard.Pause(ImageDataXfer);
-                _datxferStoryboard.Seek(ImageDataXfer, TimeSpan.Zero, TimeSeekOrigin.BeginTime);
-                _datxferStoryboard.Resume(ImageDataXfer);
+                _datxferStoryboard.Pause();
+                _datxferStoryboard.Seek(TimeSpan.Zero, TimeSeekOrigin.BeginTime);
+                _datxferStoryboard.Resume();
 
                 if (_timeSincelastUpdate.Elapsed == TimeSpan.Zero || _timeSincelastUpdate.Elapsed > AdjustHeartGifBpmInterval)
                 {
                     _timeSincelastUpdate.Stop();
 
-                    // For some reason the unqualified call always throws an InvalidOperationException.
-                    // Adding the argument results in the warning text
-                    //     System.Windows.Media.Animation Warning: 6 : Unable to perform action because the specified Storyboard was never applied to this object for interactive control.
-                    // But seems to work.
-                    currentTime = _heartStoryboard.GetCurrentTime(ImageHeart) ?? TimeSpan.Zero;
+                    currentTime = _heartStoryboard.GetCurrentTime();
 
                     _heartStoryboard.RepeatBehavior = RepeatBehavior.Forever;
                     _heartStoryboard.Stop();
                     _heartStoryboard.SpeedRatio = scaleFactor;
-                    _heartStoryboard.Begin(ImageHeart, true);
+                    _heartStoryboard.Begin(); // do not call with arguments, see notes in main constructor
                     _heartStoryboard.Seek(currentTime);
 
                     _timeSincelastUpdate.Restart();
@@ -116,11 +144,11 @@ namespace HeartRateHistory.Windows
         {
             Dispatcher.Invoke(() =>
             {
-                _heartStoryboard.Pause(ImageHeart);
-                _heartStoryboard.Seek(ImageHeart, TimeSpan.Zero, TimeSeekOrigin.BeginTime);
+                _heartStoryboard.Pause();
+                _heartStoryboard.Seek(TimeSpan.Zero, TimeSeekOrigin.BeginTime);
 
-                _datxferStoryboard.Pause(ImageDataXfer);
-                _datxferStoryboard.Seek(ImageDataXfer, TimeSpan.Zero, TimeSeekOrigin.BeginTime);
+                _datxferStoryboard.Pause();
+                _datxferStoryboard.Seek(TimeSpan.Zero, TimeSeekOrigin.BeginTime);
             });
         }
 
