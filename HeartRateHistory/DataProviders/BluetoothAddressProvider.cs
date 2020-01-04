@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Timers;
+using BurnsBac.HotConfig;
+using BurnsBac.HotConfig.DataSource;
 using BurnsBac.WindowsHardware.Bluetooth;
-using HeartRateHistory.HotConfig;
-using HeartRateHistory.HotConfig.DataSource;
 using Windows.Devices.Bluetooth.Advertisement;
 
 namespace HeartRateHistory.DefaultConfigDataProviders

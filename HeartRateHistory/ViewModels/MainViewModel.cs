@@ -6,10 +6,14 @@ using System.Text;
 using System.Timers;
 using System.Windows.Controls;
 using System.Windows.Input;
-using BurnsBac.Mvvm;
+using BurnsBac.WindowsAppToolkit;
+using BurnsBac.HotConfig;
+using BurnsBac.WindowsAppToolkit.Mvvm;
+using BurnsBac.WindowsAppToolkit.Services.MessageBus;
+using BurnsBac.WindowsAppToolkit.ViewModels;
+using BurnsBac.WindowsAppToolkit.Windows;
 using BurnsBac.WindowsHardware.Bluetooth.Characteristics;
 using BurnsBac.WindowsHardware.Bluetooth.Sensors;
-using HeartRateHistory.HotConfig;
 using HeartRateHistory.Models;
 using HeartRateHistory.Windows;
 
@@ -52,9 +56,9 @@ namespace HeartRateHistory.ViewModels
         {
             ReadConfig();
 
-            MessageBus.MessageBus.Subscribe<ConfigViewModel, MainViewModel>(nameof(ConfigViewModel.SettingsChangedNotification), this, SettingsChangeHandler);
+            BurnsBac.WindowsAppToolkit.Services.MessageBus.MessageBus.Subscribe<ConfigViewModel, MainViewModel>(nameof(ConfigViewModel.SettingsChangedNotification), this, SettingsChangeHandler);
 
-            ShowAppConfigWindowCommand = new CommandHandler(() => Workspace.CreateSingletonWindow<ConfigWindow>());
+            ShowAppConfigWindowCommand = new CommandHandler(() => Workspace.CreateSingletonWindow<ConfigWindow>(SharedConfig.SettingsFileName));
 
             PauseResumeCommand = new CommandHandler(PauseResumeCommandAction, x => IsConnected);
             ConnectDisconnectCommand = new CommandHandler(ConnectDisconnectCommandAction, x => GetCanConnectDisconnect());

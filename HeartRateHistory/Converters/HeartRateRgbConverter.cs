@@ -4,7 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media;
-using HeartRateHistory.HotConfig;
+using BurnsBac.HotConfig;
+using BurnsBac.WindowsAppToolkit.Services.MessageBus;
+using BurnsBac.WindowsAppToolkit.ViewModels;
 
 namespace HeartRateHistory.Converters
 {
@@ -171,7 +173,7 @@ namespace HeartRateHistory.Converters
 
             if (!_isSetup)
             {
-                MessageBus.MessageBus.Subscribe<ViewModels.ConfigViewModel, HeartRateRgbConverter>(nameof(ViewModels.ConfigViewModel.SettingsChangedNotification), Instance, SettingsChangeHandler);
+                MessageBus.Subscribe<ConfigViewModel, HeartRateRgbConverter>(nameof(ConfigViewModel.SettingsChangedNotification), Instance, SettingsChangeHandler);
             }
 
             _isSetup = true;

@@ -5,6 +5,9 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using BurnsBac.WindowsAppToolkit;
+using BurnsBac.WindowsAppToolkit.ViewModels;
+using BurnsBac.WindowsAppToolkit.Windows;
 
 namespace HeartRateHistory
 {
@@ -32,6 +35,13 @@ namespace HeartRateHistory
                 e.SetObserved();
                 ShowUnhandledException(e.Exception, "TaskScheduler.UnobservedTaskException");
             };
+
+            // Make sure the config window know where to find type information
+            BurnsBac.HotConfig.TypeResolver.ConfigDataProvidersDirectory = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+
+            // this isn't ideal, but the RgbConvert needs to listen to the messagebus for settings file changes, so make
+            // sure that's loaded at least once.
+            Converters.HeartRateRgbConverter.Setup();
         }
 
         /// <summary>
@@ -42,12 +52,12 @@ namespace HeartRateHistory
         /// <param name="source">Source of exception.</param>
         private void ShowUnhandledException(Exception ex, string source)
         {
-            var ewvm = new ViewModels.ErrorWindowViewModel($"Unhandled exception in application: {source}", ex)
+            var ewvm = new ErrorWindowViewModel($"Unhandled exception in application: {source}", ex)
             {
                 ExitOnClose = true,
             };
 
-            Workspace.RecreateSingletonWindow<Windows.ErrorWindow>(ewvm);
+            Workspace.RecreateSingletonWindow<ErrorWindow>(ewvm);
         }
     }
 }

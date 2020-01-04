@@ -17,7 +17,6 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using BurnsBac.Mvvm;
 using BurnsBac.WindowsHardware;
 using HeartRateHistory.ViewModels;
 using Windows.Devices.Bluetooth;

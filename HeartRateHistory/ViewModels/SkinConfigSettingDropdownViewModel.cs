@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
-using HeartRateHistory.Dto;
-using HeartRateHistory.HotConfig;
-using HeartRateHistory.HotConfig.DataSource;
+using BurnsBac.HotConfig;
+using BurnsBac.HotConfig.DataSource;
+using BurnsBac.HotConfig.Error;
+using BurnsBac.WindowsAppToolkit.Dto;
 
 namespace HeartRateHistory.ViewModels
 {
@@ -32,7 +33,7 @@ namespace HeartRateHistory.ViewModels
             catch (Exception ex)
             {
                 var message = $"Could not resolve datasource. Datasource='{item.Datasource}', DatasourceAssembly='{item.DatasourceAssembly}'.";
-                throw new Error.InvalidConfiguration(message, ex);
+                throw new InvalidConfiguration(message, ex);
             }
 
             var dataProviderType = _dataProvider.GetType();
@@ -56,7 +57,7 @@ namespace HeartRateHistory.ViewModels
             }
             else
             {
-                throw new Error.InvalidConfiguration("Settings dropdown doesn't implement a known interface.");
+                throw new InvalidConfiguration("Settings dropdown doesn't implement a known interface.");
             }
 
             SelectedItem = Items.Where(x => x.Id == CurrentValue).FirstOrDefault();
