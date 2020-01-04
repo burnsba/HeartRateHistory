@@ -7,7 +7,7 @@
     <Authors>Ben Burns</Authors>
     <Copyright>Ben Burns 2019</Copyright>
     <PackageLicenseFile>COPYING</PackageLicenseFile>
-    <FileVersion>1.1.5.1</FileVersion>
+    <FileVersion>1.1.6.1</FileVersion>
     <PackageProjectUrl>https://github.com/burnsba/HeartRateHistory</PackageProjectUrl>
     <RepositoryUrl>https://github.com/burnsba/HeartRateHistory</RepositoryUrl>
   </PropertyGroup>
@@ -22,6 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="BurnsBac.WindowsAppToolkit" Version="1.1.0" />
     <PackageReference Include="BurnsBac.WindowsHardware" Version="1.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
@@ -32,12 +33,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="BurnsBac.HotConfig">
-      <HintPath>..\..\staging\BurnsBac.HotConfig.dll</HintPath>
-    </Reference>
-    <Reference Include="BurnsBac.WindowsAppToolkit">
-      <HintPath>..\..\staging\BurnsBac.WindowsAppToolkit.dll</HintPath>
-    </Reference>
     <Reference Include="System.Runtime.WindowsRuntime">
       <HintPath>..\lib\System.Runtime.WindowsRuntime.dll</HintPath>
     </Reference>
