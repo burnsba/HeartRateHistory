@@ -1,0 +1,826 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>HeartRateHistory</name>
+    </assembly>
+    <members>
+        <member name="T:HeartRateHistory.Animation.EmbeddedResourceGif">
+            <summary>
+            Class to manage gif file from embedded resource.
+            </summary>
+        </member>
+        <member name="M:HeartRateHistory.Animation.EmbeddedResourceGif.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:HeartRateHistory.Animation.EmbeddedResourceGif"/> class.
+            </summary>
+            <param name="embeddedResourcePath">Path to embedded resource.</param>
+            <example>
+            <code>
+            var heartAnimation = new Animation.EmbeddedResourceGif("HeartRateHistory.img.heart.gif");
+            </code>
+            </example>
+        </member>
+        <member name="P:HeartRateHistory.Animation.EmbeddedResourceGif.EmbeddedResourcePath">
+            <summary>
+            Gets or sets the path to the embedded resource.
+            </summary>
+        </member>
+        <member name="P:HeartRateHistory.Animation.EmbeddedResourceGif.Frames">
+            <summary>
+            Gets or sets the collection of frames within the gif.
+            </summary>
+        </member>
+        <member name="M:HeartRateHistory.Animation.EmbeddedResourceGif.Dispose">
+            <inheritdoc />
+        </member>
+        <member name="M:HeartRateHistory.Animation.EmbeddedResourceGif.MakeWpfImageStoryboard(System.Windows.Controls.Image,System.TimeSpan)">
+            <summary>
+            Creates a storyboard for the WPF image from this gif. Frame duration within the gif is ignored,
+            each frame is given an equal duration based on the <paramref name="totalDuration"/>.
+            </summary>
+            <param name="wpfImage">Image to create storyboard for.</param>
+            <param name="totalDuration">Total duration of animation.</param>
+            <returns>Storyboard for animation.</returns>
+        </member>
+        <member name="M:HeartRateHistory.Animation.EmbeddedResourceGif.ToAnimationFlat(System.TimeSpan)">
+            <summary>
+            Helper function, creates the necessary keyframes for the storyboard.
+            </summary>
+            <param name="totalDuration">Total duration of animation. Each keyframe is given a duration of <paramref name="totalDuration"/> / <see cref="P:HeartRateHistory.Animation.EmbeddedResourceGif.Frames"/>.Count.</param>
+            <returns>Keyframe animation.</returns>
+        </member>
+        <member name="T:HeartRateHistory.Animation.EmbeddedResourceGifFrame">
+            <summary>
+            Single frame to be used in an animation.
+            </summary>
+        </member>
+        <member name="M:HeartRateHistory.Animation.EmbeddedResourceGifFrame.#ctor(System.Int32,System.Drawing.Image)">
+            <summary>
+            Initializes a new instance of the <see cref="T:HeartRateHistory.Animation.EmbeddedResourceGifFrame"/> class.
+            </summary>
+            <param name="currentFrame">Which frame this is out of the total.</param>
+            <param name="imageSource">Image data source.</param>
+        </member>
+        <member name="P:HeartRateHistory.Animation.EmbeddedResourceGifFrame.CurrentFrame">
+            <summary>
+            Gets or sets the current frame.
+            </summary>
+        </member>
+        <member name="P:HeartRateHistory.Animation.EmbeddedResourceGifFrame.FrameHeight">
+            <summary>
+            Gets or sets the frame height.
+            </summary>
+        </member>
+        <member name="P:HeartRateHistory.Animation.EmbeddedResourceGifFrame.FrameWidth">
+            <summary>
+            Gets or sets the frame width.
+            </summary>
+        </member>
+        <member name="P:HeartRateHistory.Animation.EmbeddedResourceGifFrame.Image">
+            <summary>
+            Gets or sets the image data.
+            </summary>
+        </member>
+        <member name="M:HeartRateHistory.Animation.EmbeddedResourceGifFrame.Dispose">
+            <inheritdoc />
+        </member>
+        <member name="T:HeartRateHistory.App">
+            <summary>
+            Interaction logic for App.xaml .
+            </summary>
+            <summary>
+            App
+            </summary>
+        </member>
+        <member name="M:HeartRateHistory.App.App_Startup(System.Object,System.Windows.StartupEventArgs)">
+            <summary>
+            App startup method.
+            </summary>
+            <param name="sender">Sender.</param>
+            <param name="e">Args.</param>
+        </member>
+        <member name="M:HeartRateHistory.App.ShowUnhandledException(System.Exception,System.String)">
+            <summary>
+            Shows error window for uncaught exceptions. Closes application once
+            the error window is closed.
+            </summary>
+            <param name="ex">Exception to display.</param>
+            <param name="source">Source of exception.</param>
+        </member>
+        <member name="M:HeartRateHistory.App.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="M:HeartRateHistory.App.Main">
+            <summary>
+            Application Entry Point.
+            </summary>
+        </member>
+        <member name="T:HeartRateHistory.Converters.HeartRateRgbConverter">
+            <summary>
+            Describes how to convert a heartrate to a color.
+            </summary>
+        </member>
+        <member name="P:HeartRateHistory.Converters.HeartRateRgbConverter.Instance">
+            <summary>
+            Gets the singleton instance.
+            </summary>
+        </member>
+        <member name="P:HeartRateHistory.Converters.HeartRateRgbConverter.ColorIntervals">
+            <summary>
+            Gets or sets the number of possible colors.
+            </summary>
+        </member>
+        <member name="P:HeartRateHistory.Converters.HeartRateRgbConverter.CutoffRange">
+            <summary>
+            Gets or sets the range (scaled from zero) of available heartrates.
+            </summary>
+        </member>
+        <member name="P:HeartRateHistory.Converters.HeartRateRgbConverter.MaxCutoff">
+            <summary>
+            Gets or sets the least upper bound of the last color interval heart rate.
+            </summary>
+        </member>
+        <member name="P:HeartRateHistory.Converters.HeartRateRgbConverter.MinCutoff">
+            <summary>
+            Gets or sets the greatest lower bound of the first color interval heart rate.
+            </summary>
+        </member>
+        <member name="M:HeartRateHistory.Converters.HeartRateRgbConverter.FromInt(System.Int32)">
+            <summary>
+            Gets the appropriate color to render a particular heartrate value.
+            </summary>
+            <param name="val">Heartrate value.</param>
+            <returns>Color brush to render heartrate.</returns>
+        </member>
+        <member name="M:HeartRateHistory.Converters.HeartRateRgbConverter.Setup">
+            <summary>
+            Loads settings and sets intervals.
+            </summary>
+        </member>
+        <member name="M:HeartRateHistory.Converters.HeartRateRgbConverter.BuildIntervalValues">
+            <summary>
+            Creates the actual intervals used to determine colors for heartrates.
+            </summary>
+        </member>
+        <member name="T:HeartRateHistory.Converters.SlideChartDataPointToRectangleConverter">
+            <summary>
+            Converts bool to visibility status.
+            </summary>
+        </member>
+        <member name="M:HeartRateHistory.Converters.SlideChartDataPointToRectangleConverter.Convert(System.Object,System.Type,System.Object,System.Globalization.CultureInfo)">
+            <summary>
+            Converts SlideChartDataPoint to Rectangle.
+            </summary>
+            <param name="value">Value to convert (bool).</param>
+            <param name="targetType">Type to convert to (Visibility).</param>
+            <param name="parameter">Convert parameter.</param>
+            <param name="culture">Convert culture.</param>
+            <returns>
+            Visibility status.
+            </returns>
+        </member>
+        <member name="M:HeartRateHistory.Converters.SlideChartDataPointToRectangleConverter.ConvertBack(System.Object,System.Type,System.Object,System.Globalization.CultureInfo)">
+            <summary>
+            NotSupported.
+            </summary>
+            <param name="value">Value to convert (System.Windows.Shapes.Rectangle).</param>
+            <param name="targetType">Type to convert to (SlideChartDataPoint).</param>
+            <param name="parameter">Convert parameter.</param>
+            <param name="culture">Convert culture.</param>
+            <returns>
+            bool.
+            </returns>
+            <remarks>
+            Converts System.Windows.Shapes.Rectangle to SlideChartDataPoint.
+            </remarks>
+        </member>
+        <member name="T:HeartRateHistory.Converters.SlideChartDataPointToRectangleMultiConverter">
+            <summary>
+            Converts bool to visibility status.
+            </summary>
+        </member>
+        <member name="M:HeartRateHistory.Converters.SlideChartDataPointToRectangleMultiConverter.Convert(System.Object[],System.Type,System.Object,System.Globalization.CultureInfo)">
+            <summary>
+            Converts SlideChartDataPoint to Rectangle.
+            </summary>
+            <param name="values">Value to convert (SlideChartDataPoint).</param>
+            <param name="targetType">Type to convert to (Rectangle).</param>
+            <param name="parameter">Convert parameter.</param>
+            <param name="culture">Convert culture.</param>
+            <returns>
+            Visibility status.
+            </returns>
+        </member>
+        <member name="M:HeartRateHistory.Converters.SlideChartDataPointToRectangleMultiConverter.ConvertBack(System.Object,System.Type[],System.Object,System.Globalization.CultureInfo)">
+            <summary>
+            NotSupported.
+            </summary>
+            <param name="value">Value to convert (System.Windows.Shapes.Rectangle).</param>
+            <param name="targetTypes">Type to convert to (SlideChartDataPoint).</param>
+            <param name="parameter">Convert parameter.</param>
+            <param name="culture">Convert culture.</param>
+            <returns>
+            bool.
+            </returns>
+            <remarks>
+            Converts System.Windows.Shapes.Rectangle to SlideChartDataPoint.
+            </remarks>
+        </member>
+        <member name="T:HeartRateHistory.DefaultConfigDataProviders.BluetoothAddressProvider">
+            <summary>
+            Scans for connected bluetooth devices.
+            </summary>
+        </member>
+        <member name="M:HeartRateHistory.DefaultConfigDataProviders.BluetoothAddressProvider.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:HeartRateHistory.DefaultConfigDataProviders.BluetoothAddressProvider"/> class.
+            </summary>
+        </member>
+        <member name="P:HeartRateHistory.DefaultConfigDataProviders.BluetoothAddressProvider.DataItems">
+            <inheritdoc />
+        </member>
+        <member name="M:HeartRateHistory.DefaultConfigDataProviders.BluetoothAddressProvider.Dispose">
+            <inheritdoc />
+        </member>
+        <member name="M:HeartRateHistory.DefaultConfigDataProviders.BluetoothAddressProvider.Start">
+            <summary>
+            Starts scanning for bluetooth devices.
+            </summary>
+        </member>
+        <member name="M:HeartRateHistory.DefaultConfigDataProviders.BluetoothAddressProvider.Stop">
+            <summary>
+            Stops scanning for bluetooth devices.
+            </summary>
+        </member>
+        <member name="M:HeartRateHistory.DefaultConfigDataProviders.BluetoothAddressProvider.OnAdvertisementReceived(Windows.Devices.Bluetooth.Advertisement.BluetoothLEAdvertisementWatcher,Windows.Devices.Bluetooth.Advertisement.BluetoothLEAdvertisementReceivedEventArgs)">
+            <summary>
+            Event handler when a new advertisement is received.
+            </summary>
+            <param name="watcher">Watcher.</param>
+            <param name="eventArgs">Args.</param>
+        </member>
+        <member name="T:HeartRateHistory.Error.ActivationException">
+            <summary>
+            Exception when activating skin.
+            </summary>
+        </member>
+        <member name="M:HeartRateHistory.Error.ActivationException.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:HeartRateHistory.Error.ActivationException"/> class.
+            </summary>
+        </member>
+        <member name="M:HeartRateHistory.Error.ActivationException.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:HeartRateHistory.Error.ActivationException"/> class.
+            </summary>
+            <param name="message">Exception message.</param>
+        </member>
+        <member name="M:HeartRateHistory.Error.ActivationException.#ctor(System.String,System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:HeartRateHistory.Error.ActivationException"/> class.
+            </summary>
+            <param name="message">Exception message.</param>
+            <param name="innerException">Inner exception.</param>
+        </member>
+        <member name="M:HeartRateHistory.Error.ActivationException.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Initializes a new instance of the <see cref="T:HeartRateHistory.Error.ActivationException"/> class.
+            </summary>
+            <param name="info">SerializationInfo.</param>
+            <param name="context">StreamingContext.</param>
+        </member>
+        <member name="T:HeartRateHistory.Error.GenericHardwareNotSupported">
+            <summary>
+            Exception when reading skin xml file, can not resolve hardware in xml to known type.
+            </summary>
+        </member>
+        <member name="M:HeartRateHistory.Error.GenericHardwareNotSupported.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:HeartRateHistory.Error.GenericHardwareNotSupported"/> class.
+            </summary>
+        </member>
+        <member name="M:HeartRateHistory.Error.GenericHardwareNotSupported.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:HeartRateHistory.Error.GenericHardwareNotSupported"/> class.
+            </summary>
+            <param name="message">Exception message.</param>
+        </member>
+        <member name="M:HeartRateHistory.Error.GenericHardwareNotSupported.#ctor(System.String,System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:HeartRateHistory.Error.GenericHardwareNotSupported"/> class.
+            </summary>
+            <param name="message">Exception message.</param>
+            <param name="innerException">Inner exception.</param>
+        </member>
+        <member name="M:HeartRateHistory.Error.GenericHardwareNotSupported.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Initializes a new instance of the <see cref="T:HeartRateHistory.Error.GenericHardwareNotSupported"/> class.
+            </summary>
+            <param name="info">SerializationInfo.</param>
+            <param name="context">StreamingContext.</param>
+        </member>
+        <member name="T:HeartRateHistory.Error.UiNotSupported">
+            <summary>
+            Exception when reading skin xml file, can not ui display type to known type.
+            </summary>
+        </member>
+        <member name="M:HeartRateHistory.Error.UiNotSupported.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:HeartRateHistory.Error.UiNotSupported"/> class.
+            </summary>
+        </member>
+        <member name="M:HeartRateHistory.Error.UiNotSupported.#ctor(System.String)">
+            <summary>
+            Initializes a new instance of the <see cref="T:HeartRateHistory.Error.UiNotSupported"/> class.
+            </summary>
+            <param name="message">Exception message.</param>
+        </member>
+        <member name="M:HeartRateHistory.Error.UiNotSupported.#ctor(System.String,System.Exception)">
+            <summary>
+            Initializes a new instance of the <see cref="T:HeartRateHistory.Error.UiNotSupported"/> class.
+            </summary>
+            <param name="message">Exception message.</param>
+            <param name="innerException">Inner exception.</param>
+        </member>
+        <member name="M:HeartRateHistory.Error.UiNotSupported.#ctor(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)">
+            <summary>
+            Initializes a new instance of the <see cref="T:HeartRateHistory.Error.UiNotSupported"/> class.
+            </summary>
+            <param name="info">SerializationInfo.</param>
+            <param name="context">StreamingContext.</param>
+        </member>
+        <member name="T:HeartRateHistory.Models.SlideChartDataPoint">
+            <summary>
+            Single data item to be drawn on a chart.
+            </summary>
+        </member>
+        <member name="M:HeartRateHistory.Models.SlideChartDataPoint.#ctor(System.DateTime,System.Int32)">
+            <summary>
+            Initializes a new instance of the <see cref="T:HeartRateHistory.Models.SlideChartDataPoint"/> class.
+            </summary>
+            <param name="captureTime">Time of data acquisition.</param>
+            <param name="value">Data value.</param>
+        </member>
+        <member name="P:HeartRateHistory.Models.SlideChartDataPoint.CaptureTime">
+            <summary>
+            Gets time of data acquisition.
+            </summary>
+        </member>
+        <member name="P:HeartRateHistory.Models.SlideChartDataPoint.Value">
+            <summary>
+            Gets data value.
+            </summary>
+        </member>
+        <member name="M:HeartRateHistory.Models.SlideChartDataPoint.ToString">
+            <inheritdoc />
+        </member>
+        <member name="T:HeartRateHistory.SharedConfig">
+            <summary>
+            Settings helper.
+            </summary>
+        </member>
+        <member name="F:HeartRateHistory.SharedConfig.SettingsFileName">
+            <summary>
+            Name of file containing settings.
+            </summary>
+        </member>
+        <member name="F:HeartRateHistory.SharedConfig.CurrentHeartRateFontFamilyKey">
+            <summary>
+            Settings key for <see cref="P:HeartRateHistory.ViewModels.MainViewModel.CurrentHeartRateFontFamily"/>.
+            </summary>
+        </member>
+        <member name="F:HeartRateHistory.SharedConfig.CurrentHeartRateFontSizeKey">
+            <summary>
+            Settings key for <see cref="P:HeartRateHistory.ViewModels.MainViewModel.CurrentHeartRateFontSize"/>.
+            </summary>
+        </member>
+        <member name="F:HeartRateHistory.SharedConfig.BluetoothDeviceAddressKey">
+            <summary>
+            Settings key for <see cref="P:HeartRateHistory.ViewModels.MainViewModel.BluetoothDeviceAddress"/>.
+            </summary>
+        </member>
+        <member name="F:HeartRateHistory.SharedConfig.DataSeriesSaveFileKey">
+            <summary>
+            Settings key for <see cref="P:HeartRateHistory.ViewModels.MainViewModel.DataSeriesSaveFile"/>.
+            </summary>
+        </member>
+        <member name="F:HeartRateHistory.SharedConfig.DateTimeFormatKey">
+            <summary>
+            Settings key for DateTimeFormat.
+            </summary>
+        </member>
+        <member name="F:HeartRateHistory.SharedConfig.DataValueDisplayWidthKey">
+            <summary>
+            Settings key for <see cref="P:HeartRateHistory.ViewModels.SlideChartViewModel.DataValueDisplayWidth"/>.
+            </summary>
+        </member>
+        <member name="F:HeartRateHistory.SharedConfig.ColorIntervalsKey">
+            <summary>
+            Settings key for <see cref="P:HeartRateHistory.Converters.HeartRateRgbConverter.ColorIntervals"/>.
+            </summary>
+        </member>
+        <member name="F:HeartRateHistory.SharedConfig.HeartRateGreenFloorKey">
+            <summary>
+            Settings key for <see cref="P:HeartRateHistory.Converters.HeartRateRgbConverter.MinCutoff"/>.
+            </summary>
+        </member>
+        <member name="F:HeartRateHistory.SharedConfig.HeartRateRedCeilingKey">
+            <summary>
+            Settings key for <see cref="P:HeartRateHistory.Converters.HeartRateRgbConverter.MaxCutoff"/>.
+            </summary>
+        </member>
+        <member name="F:HeartRateHistory.SharedConfig.SlideChartBackgroundColorKey">
+            <summary>
+            Settings key for <see cref="P:HeartRateHistory.ViewModels.SlideChartViewModel.BackgroundColor"/>.
+            </summary>
+        </member>
+        <member name="F:HeartRateHistory.SharedConfig.SlideChartDataLineColorKey">
+            <summary>
+            Settings key for <see cref="P:HeartRateHistory.ViewModels.SlideChartViewModel.BackgroundDataLineColor"/>.
+            </summary>
+        </member>
+        <member name="F:HeartRateHistory.SharedConfig.SlideChartDataLineLabelColorKey">
+            <summary>
+            Settings key for <see cref="P:HeartRateHistory.ViewModels.SlideChartViewModel.BackgroundDataLineLabelColor"/>.
+            </summary>
+        </member>
+        <member name="F:HeartRateHistory.SharedConfig.MaxItemsDisplayedKey">
+            <summary>
+            Settings key for <see cref="P:HeartRateHistory.ViewModels.SlideChartViewModel.MaxItemsDisplayed"/>.
+            </summary>
+        </member>
+        <member name="F:HeartRateHistory.SharedConfig.MaxItemsInMemoryKey">
+            <summary>
+            Settings key for <see cref="P:HeartRateHistory.ViewModels.SlideChartViewModel.MaxItemsInMemory"/>.
+            </summary>
+        </member>
+        <member name="T:HeartRateHistory.ViewModels.MainViewModel">
+            <summary>
+            View model for main window.
+            </summary>
+        </member>
+        <member name="M:HeartRateHistory.ViewModels.MainViewModel.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:HeartRateHistory.ViewModels.MainViewModel"/> class.
+            </summary>
+        </member>
+        <member name="E:HeartRateHistory.ViewModels.MainViewModel.DataReceived">
+            <summary>
+            Events raised when data is received.
+            </summary>
+        </member>
+        <member name="E:HeartRateHistory.ViewModels.MainViewModel.StopNotification">
+            <summary>
+            Event raised when user disconnects from bluetooth device (when <see cref="M:HeartRateHistory.ViewModels.MainViewModel.Stop"/> is called).
+            </summary>
+        </member>
+        <member name="P:HeartRateHistory.ViewModels.MainViewModel.BluetoothDeviceAddress">
+            <summary>
+            Gets or sets the address of the bluetooth device to connect to.
+            </summary>
+        </member>
+        <member name="P:HeartRateHistory.ViewModels.MainViewModel.CanConnect">
+            <summary>
+            Gets a value indicating whether it is possible to connect.
+            </summary>
+        </member>
+        <member name="P:HeartRateHistory.ViewModels.MainViewModel.ConnectDisconnectCommand">
+            <summary>
+            Gets or sets the command used by the "Connect/Disconnect" button.
+            </summary>
+        </member>
+        <member name="P:HeartRateHistory.ViewModels.MainViewModel.ConnectDisconnectText">
+            <summary>
+            Gets the text used by the "Connect/Disconnect" button.
+            </summary>
+        </member>
+        <member name="P:HeartRateHistory.ViewModels.MainViewModel.CurrentHeartRate">
+            <summary>
+            Gets or sets the current rate.
+            </summary>
+            <value>
+            <see cref="T:System.Int32" /> if available, or <see cref="F:HeartRateHistory.ViewModels.MainViewModel.NoDataHeartRate"/> if not.
+            </value>
+        </member>
+        <member name="P:HeartRateHistory.ViewModels.MainViewModel.TimeSinceLastUpdate">
+            <summary>
+            Gets or sets the time since the last update from the connected device.
+            </summary>
+            <value>
+            <see cref="T:System.Double" /> if available, or <see cref="F:HeartRateHistory.ViewModels.MainViewModel.NoDataTimeSinceLastUpdate"/> if not.
+            </value>
+        </member>
+        <member name="P:HeartRateHistory.ViewModels.MainViewModel.CurrentHeartRateFontFamily">
+            <summary>
+            Gets or sets the font used to render the current heart rate.
+            </summary>
+        </member>
+        <member name="P:HeartRateHistory.ViewModels.MainViewModel.CurrentHeartRateFontSize">
+            <summary>
+            Gets or sets the font size used to display the current heart rate.
+            </summary>
+        </member>
+        <member name="P:HeartRateHistory.ViewModels.MainViewModel.DataSeriesSaveFile">
+            <summary>
+            Gets or sets the name of the file used to save the data collection in memory to disk.
+            </summary>
+        </member>
+        <member name="P:HeartRateHistory.ViewModels.MainViewModel.IsConnected">
+            <summary>
+            Gets or sets a value indicating whether the bluetooth device is currently connected.
+            </summary>
+        </member>
+        <member name="P:HeartRateHistory.ViewModels.MainViewModel.IsConnecting">
+            <summary>
+            Gets or sets a value indicating whether the is an active attempt to connect
+            to the bluetooth device.
+            </summary>
+        </member>
+        <member name="P:HeartRateHistory.ViewModels.MainViewModel.PauseResumeCommand">
+            <summary>
+            Gets or sets the command for the "Pause/Resume" button.
+            </summary>
+        </member>
+        <member name="P:HeartRateHistory.ViewModels.MainViewModel.PauseResumeText">
+            <summary>
+            Gets the text for the "Pause/Resume" button.
+            </summary>
+        </member>
+        <member name="P:HeartRateHistory.ViewModels.MainViewModel.ReconnectCommand">
+            <summary>
+            Gets or sets the command used by the reconnect button (not used).
+            </summary>
+        </member>
+        <member name="P:HeartRateHistory.ViewModels.MainViewModel.ResetCommand">
+            <summary>
+            Gets or sets the command used by the reset button.
+            </summary>
+        </member>
+        <member name="P:HeartRateHistory.ViewModels.MainViewModel.SaveCommand">
+            <summary>
+            Gets or sets the command used by the save button.
+            </summary>
+        </member>
+        <member name="P:HeartRateHistory.ViewModels.MainViewModel.ShowAppConfigWindowCommand">
+            <summary>
+            Gets or sets the command to show the settings window.
+            </summary>
+        </member>
+        <member name="P:HeartRateHistory.ViewModels.MainViewModel.SlideChartViewModel">
+            <summary>
+            Gets or sets the associated viewmodel for the chart.
+            </summary>
+        </member>
+        <member name="M:HeartRateHistory.ViewModels.MainViewModel.Start">
+            <summary>
+            Connects to the bluetooth device and starts receiving data. Data is then
+            forwarded to the chart.
+            </summary>
+        </member>
+        <member name="M:HeartRateHistory.ViewModels.MainViewModel.Stop">
+            <summary>
+            Stops receiving data and disconnects from the bluetooth device.
+            </summary>
+        </member>
+        <member name="M:HeartRateHistory.ViewModels.MainViewModel.ConnectionWatchdogTimer_Elapsed(System.Object,System.Timers.ElapsedEventArgs)">
+            <summary>
+            Watchdog event. Was designed to be used with reconnect command, but currently on hold.
+            </summary>
+            <param name="sender">Sender.</param>
+            <param name="e">Args.</param>
+        </member>
+        <member name="M:HeartRateHistory.ViewModels.MainViewModel.InputEventMapper(System.Object,BurnsBac.WindowsHardware.Bluetooth.Characteristics.HeartRateMeasurement)">
+            <summary>
+            Accepts <see cref="T:BurnsBac.WindowsHardware.Bluetooth.Characteristics.HeartRateMeasurement"/>,
+            adds data to the chart.
+            </summary>
+            <param name="sender">Sender.</param>
+            <param name="state">Event args.</param>
+        </member>
+        <member name="M:HeartRateHistory.ViewModels.MainViewModel.ReadConfig">
+            <summary>
+            Reads app.config and sets global settings.
+            </summary>
+        </member>
+        <member name="T:HeartRateHistory.ViewModels.SkinConfigSettingDropdownViewModel">
+            <summary>
+            View model for skin config dropdown setting.
+            </summary>
+        </member>
+        <member name="M:HeartRateHistory.ViewModels.SkinConfigSettingDropdownViewModel.#ctor(BurnsBac.HotConfig.Setting)">
+            <summary>
+            Initializes a new instance of the <see cref="T:HeartRateHistory.ViewModels.SkinConfigSettingDropdownViewModel"/> class.
+            </summary>
+            <param name="item">Source item.</param>
+        </member>
+        <member name="E:HeartRateHistory.ViewModels.SkinConfigSettingDropdownViewModel.PropertyChanged">
+            <summary>
+            Property changed event.
+            </summary>
+        </member>
+        <member name="P:HeartRateHistory.ViewModels.SkinConfigSettingDropdownViewModel.Items">
+            <summary>
+            Gets or sets list of dropdown data items.
+            </summary>
+        </member>
+        <member name="P:HeartRateHistory.ViewModels.SkinConfigSettingDropdownViewModel.SelectedItem">
+            <summary>
+            Gets or sets currently selected data item.
+            </summary>
+        </member>
+        <member name="P:HeartRateHistory.ViewModels.SkinConfigSettingDropdownViewModel.ShowScanningInfo">
+            <summary>
+            Gets a value indicating whether the UI should notify the user the application is waiting for results.
+            </summary>
+        </member>
+        <member name="P:HeartRateHistory.ViewModels.SkinConfigSettingDropdownViewModel.WaitingForFirstPollResult">
+            <summary>
+            Gets or sets a value indicating whether any poll results have been received yet.
+            </summary>
+        </member>
+        <member name="M:HeartRateHistory.ViewModels.SkinConfigSettingDropdownViewModel.Dispose">
+            <inheritdoc />
+        </member>
+        <member name="M:HeartRateHistory.ViewModels.SkinConfigSettingDropdownViewModel.OnPropertyChanged(System.String)">
+            <summary>
+            Property changed notifier.
+            </summary>
+            <param name="property">Name of property that changed.</param>
+        </member>
+        <member name="T:HeartRateHistory.ViewModels.SkinConfigSettingTextboxViewModel">
+            <summary>
+            View model for skin config textbox setting.
+            </summary>
+        </member>
+        <member name="M:HeartRateHistory.ViewModels.SkinConfigSettingTextboxViewModel.#ctor(BurnsBac.HotConfig.Setting)">
+            <summary>
+            Initializes a new instance of the <see cref="T:HeartRateHistory.ViewModels.SkinConfigSettingTextboxViewModel"/> class.
+            </summary>
+            <param name="item">Source item.</param>
+        </member>
+        <member name="M:HeartRateHistory.ViewModels.SkinConfigSettingTextboxViewModel.Dispose">
+            <inheritdoc />
+        </member>
+        <member name="T:HeartRateHistory.ViewModels.SlideChartViewModel">
+            <summary>
+            View model for slide chart control.
+            </summary>
+        </member>
+        <member name="F:HeartRateHistory.ViewModels.SlideChartViewModel.InitialSeriesPanelHeight">
+            <summary>
+            Default height for chart area.
+            </summary>
+        </member>
+        <member name="M:HeartRateHistory.ViewModels.SlideChartViewModel.#ctor(BurnsBac.HotConfig.SettingsCollection)">
+            <summary>
+            Initializes a new instance of the <see cref="T:HeartRateHistory.ViewModels.SlideChartViewModel"/> class.
+            </summary>
+            <param name="settingsSource">Settings file data.</param>
+        </member>
+        <member name="P:HeartRateHistory.ViewModels.SlideChartViewModel.BackgroundColor">
+            <summary>
+            Gets or sets the main window background color.
+            </summary>
+        </member>
+        <member name="P:HeartRateHistory.ViewModels.SlideChartViewModel.BackgroundColorString">
+            <summary>
+            Gets or sets the main window background color, as a hex code string.
+            </summary>
+        </member>
+        <member name="P:HeartRateHistory.ViewModels.SlideChartViewModel.BackgroundDataLineColor">
+            <summary>
+            Gets or sets the chart area interval line color.
+            </summary>
+        </member>
+        <member name="P:HeartRateHistory.ViewModels.SlideChartViewModel.BackgroundDataLineColorString">
+            <summary>
+            Gets or sets the chart area interval line color, as a hex code string.
+            </summary>
+        </member>
+        <member name="P:HeartRateHistory.ViewModels.SlideChartViewModel.BackgroundDataLineLabelColor">
+            <summary>
+            Gets or sets the chart area interval line color.
+            </summary>
+        </member>
+        <member name="P:HeartRateHistory.ViewModels.SlideChartViewModel.BackgroundDataLineLabelColorString">
+            <summary>
+            Gets or sets the chart area data interval label color, as a hex code string.
+            </summary>
+        </member>
+        <member name="P:HeartRateHistory.ViewModels.SlideChartViewModel.ContainerDisplayHeight">
+            <summary>
+            Gets or sets actual height of chart area.
+            </summary>
+        </member>
+        <member name="P:HeartRateHistory.ViewModels.SlideChartViewModel.DataValueDisplayWidth">
+            <summary>
+            Gets or sets the width of each individual rectangle in the chart area.
+            </summary>
+        </member>
+        <member name="P:HeartRateHistory.ViewModels.SlideChartViewModel.MaxItemsDisplayed">
+            <summary>
+            Gets or sets the maximum number of rectangles to be shown in the chart area.
+            </summary>
+        </member>
+        <member name="P:HeartRateHistory.ViewModels.SlideChartViewModel.MaxItemsInMemory">
+            <summary>
+            Gets or sets the max number of data points to keep in memory.
+            </summary>
+        </member>
+        <member name="P:HeartRateHistory.ViewModels.SlideChartViewModel.VisibleDataSeries">
+            <summary>
+            Gets or sets the collection used to generate rectangles rendered on the chart.
+            </summary>
+        </member>
+        <member name="P:HeartRateHistory.ViewModels.SlideChartViewModel.DateTimeFormat">
+            <summary>
+            Gets or sets the format string of the date used in when saving data to file.
+            </summary>
+        </member>
+        <member name="M:HeartRateHistory.ViewModels.SlideChartViewModel.AppendData(HeartRateHistory.Models.SlideChartDataPoint)">
+            <summary>
+            Adds a data point to the collection in memory. This is also
+            added to the collection used to render the rectangles in the chart area.
+            </summary>
+            <param name="data">Data point to add.</param>
+            <returns>True always.</returns>
+        </member>
+        <member name="M:HeartRateHistory.ViewModels.SlideChartViewModel.Clear">
+            <summary>
+            Removes all data points from memory and from the chart rendering collection.
+            </summary>
+        </member>
+        <member name="M:HeartRateHistory.ViewModels.SlideChartViewModel.NotifyReloadConfig">
+            <summary>
+            Reads the config file form disk again and updates properties accordingly.
+            </summary>
+        </member>
+        <member name="M:HeartRateHistory.ViewModels.SlideChartViewModel.VisibleReloadFromData">
+            <summary>
+            Called when the window is resized, the existing data source items in the chart area
+            are removed and added again from memory.
+            </summary>
+        </member>
+        <member name="M:HeartRateHistory.ViewModels.SlideChartViewModel.WriteValuesToFile(System.String)">
+            <summary>
+            Writes the collection of data points in memory to file.
+            </summary>
+            <param name="filename">Filename to write to.</param>
+        </member>
+        <member name="M:HeartRateHistory.ViewModels.SlideChartViewModel.TruncateArchive">
+            <summary>
+            If the settings reload shortens the length of items in memory, drop
+            the oldest items until under bound.
+            </summary>
+        </member>
+        <member name="M:HeartRateHistory.ViewModels.SlideChartViewModel.LoadConfig(BurnsBac.HotConfig.SettingsCollection)">
+            <summary>
+            Loads settings from object and sets properties.
+            </summary>
+            <param name="settingSource">Settings collection to read from.</param>
+        </member>
+        <member name="M:HeartRateHistory.ViewModels.SlideChartViewModel.ReadConfig">
+            <summary>
+            Loads settings from disk.
+            </summary>
+        </member>
+        <member name="T:HeartRateHistory.Views.SlideChart">
+            <summary>
+            Interaction logic for SlideChart.xaml .
+            </summary>
+            <summary>
+            SlideChart
+            </summary>
+        </member>
+        <member name="M:HeartRateHistory.Views.SlideChart.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:HeartRateHistory.Views.SlideChart"/> class.
+            </summary>
+        </member>
+        <member name="M:HeartRateHistory.Views.SlideChart.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:HeartRateHistory.Windows.MainWindow">
+            <summary>
+            Interaction logic for MainWindow.xaml .
+            </summary>
+            <summary>
+            MainWindow
+            </summary>
+        </member>
+        <member name="M:HeartRateHistory.Windows.MainWindow.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:HeartRateHistory.Windows.MainWindow"/> class.
+            </summary>
+        </member>
+        <member name="M:HeartRateHistory.Windows.MainWindow.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+    </members>
+</doc>

@@ -110,7 +110,7 @@
       "input": "dropdown",
       "datasource": "DataProviders.BluetoothAddressProvider",
       "assembly": "HeartRateHistory",
-      "currentValue": "251300765383294"
+      "currentValue": "249842889197197"
     }
   ]
 }

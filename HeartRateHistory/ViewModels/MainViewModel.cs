@@ -367,6 +367,19 @@ namespace HeartRateHistory.ViewModels
                 Workspace.CreateSingletonWindow<ErrorWindow>(new ErrorWindowViewModel(ex));
                 return;
             }
+            catch (BurnsBac.WindowsHardware.Bluetooth.Error.ServiceNotFoundException ex)
+            {
+                // TODO: the DeviceAddress doesn't change if the title of the dropdown is the same.
+                // so every time the battery dies, the settings.json bluetooth address
+                // goes invalid and cannot be updated from the UI.
+                _heartRateSensor.HeartRateReceivedEvent -= InputEventMapper;
+                _heartRateSensor.Dispose();
+                _heartRateSensor = null;
+                IsConnecting = false;
+
+                Workspace.CreateSingletonWindow<ErrorWindow>(new ErrorWindowViewModel(ex));
+                return;
+            }
 
             await _heartRateSensor.EnableNotifications();
 
