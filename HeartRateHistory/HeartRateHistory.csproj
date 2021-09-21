@@ -7,9 +7,10 @@
     <Authors>Ben Burns</Authors>
     <Copyright>Ben Burns 2019</Copyright>
     <PackageLicenseFile>COPYING</PackageLicenseFile>
-    <FileVersion>1.1.6.1</FileVersion>
+    <FileVersion>1.1.7.1</FileVersion>
     <PackageProjectUrl>https://github.com/burnsba/HeartRateHistory</PackageProjectUrl>
     <RepositoryUrl>https://github.com/burnsba/HeartRateHistory</RepositoryUrl>
+    <Version>1.1.7</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
