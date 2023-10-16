@@ -24,18 +24,18 @@
 
   <ItemGroup>
     <PackageReference Include="BurnsBac.WindowsAppToolkit" Version="1.1.0" />
-    <PackageReference Include="BurnsBac.WindowsHardware" Version="1.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
+    <PackageReference Include="System.Runtime.WindowsRuntime" Version="4.7.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="System.Runtime.WindowsRuntime">
-      <HintPath>..\lib\System.Runtime.WindowsRuntime.dll</HintPath>
+    <Reference Include="BurnsBac.WindowsHardware">
+      <HintPath>..\..\BurnsBac.WindowsHardware\BurnsBac.WindowsHardware\bin\Debug\netstandard2.0\BurnsBac.WindowsHardware.dll</HintPath>
     </Reference>
     <Reference Include="Windows">
       <HintPath>..\..\..\..\..\..\Program Files (x86)\Windows Kits\10\UnionMetadata\10.0.18362.0\Windows.winmd</HintPath>

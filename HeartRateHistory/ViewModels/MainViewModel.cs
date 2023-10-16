@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Timers;
 using System.Windows.Controls;
 using System.Windows.Input;
-using BurnsBac.WindowsAppToolkit;
 using BurnsBac.HotConfig;
+using BurnsBac.WindowsAppToolkit;
 using BurnsBac.WindowsAppToolkit.Mvvm;
 using BurnsBac.WindowsAppToolkit.Services.MessageBus;
 using BurnsBac.WindowsAppToolkit.ViewModels;
@@ -16,6 +17,8 @@ using BurnsBac.WindowsHardware.Bluetooth.Characteristics;
 using BurnsBac.WindowsHardware.Bluetooth.Sensors;
 using HeartRateHistory.Models;
 using HeartRateHistory.Windows;
+using Windows.Devices.Bluetooth;
+using Windows.Devices.Enumeration;
 
 namespace HeartRateHistory.ViewModels
 {
@@ -350,6 +353,29 @@ namespace HeartRateHistory.ViewModels
 
             System.Diagnostics.Debug.WriteLine($"Starting {nameof(LowEnergyHeartrateSensor)}");
 
+            DeviceInformationCollection btlecollection = DeviceInformation.FindAllAsync(BluetoothLEDevice.GetDeviceSelectorFromPairingState(true)).GetAwaiter().GetResult();
+
+            BluetoothDeviceAddress = 0;
+
+            foreach (var btledi in btlecollection)
+            {
+                BluetoothLEDevice btled = BluetoothLEDevice.FromIdAsync(btledi.Id).GetAwaiter().GetResult();
+
+                // heart rate sensor
+                if (btled.Appearance.Category == 13)
+                {
+                    BluetoothDeviceAddress = btled.BluetoothAddress;
+
+                    break;
+                }
+            }
+
+            if (BluetoothDeviceAddress == 0)
+            {
+                Workspace.CreateSingletonWindow<ErrorWindow>(new ErrorWindowViewModel(new Exception("No low energy bluetooth heart rate sensor found")));
+                return;
+            }
+
             _heartRateSensor = new LowEnergyHeartrateSensor(BluetoothDeviceAddress);
             _heartRateSensor.HeartRateReceivedEvent += InputEventMapper;
 
@@ -364,7 +390,7 @@ namespace HeartRateHistory.ViewModels
                 _heartRateSensor = null;
                 IsConnecting = false;
 
-                Workspace.CreateSingletonWindow<ErrorWindow>(new ErrorWindowViewModel(ex));
+                //Workspace.CreateSingletonWindow<ErrorWindow>(new ErrorWindowViewModel(ex));
                 return;
             }
             catch (BurnsBac.WindowsHardware.Bluetooth.Error.ServiceNotFoundException ex)

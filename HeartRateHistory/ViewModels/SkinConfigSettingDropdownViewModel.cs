@@ -61,6 +61,8 @@ namespace HeartRateHistory.ViewModels
             }
 
             SelectedItem = Items.Where(x => x.Id == CurrentValue).FirstOrDefault();
+
+            IsModified = true;
         }
 
         /// <summary>
